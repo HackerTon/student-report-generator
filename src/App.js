@@ -11,6 +11,7 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import React, {useState} from 'react';
 import {StatusBar, View} from 'react-native';
+import GeneratorPage from './UI/GeneratorPage';
 import {
   Icon,
   Text,
@@ -173,21 +174,7 @@ const App = () => {
     Text: {style: {color: 'white'}},
   };
 
-  return (
-    <ThemeProvider theme={theme}>
-      <NavigationContainer>
-        <StatusBar backgroundColor="black" />
-        <Tab.Navigator tabBarOptions={tabBarOptions}>
-          <Tab.Screen
-            name="Records"
-            component={RecordNavigator}
-            options={recordsOption}
-          />
-          <Tab.Screen name="Students" component={StudentsScreen} />
-        </Tab.Navigator>
-      </NavigationContainer>
-    </ThemeProvider>
-  );
+  return <GeneratorPage />;
 };
 
 export default App;
