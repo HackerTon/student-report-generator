@@ -154,6 +154,8 @@ const StudentsScreen = function StudentsScreen({style}) {
 };
 
 const App = () => {
+  const [page, setPage] = useState('main');
+
   const tabBarOptions = {
     labelStyle: {fontSize: 13, marginTop: -6},
     style: {
@@ -174,7 +176,32 @@ const App = () => {
     Text: {style: {color: 'white'}},
   };
 
-  return <GeneratorPage />;
+  if (page == 'main') {
+    return (
+      <View>
+        <Button title="first" onPress={() => setPage('first')} />
+        <Button title="second" onPress={() => setPage('second')} />
+      </View>
+    );
+  } else if (page == 'first') {
+    return (
+      <ThemeProvider theme={theme}>
+        <NavigationContainer>
+          <StatusBar backgroundColor="black" />
+          <Tab.Navigator tabBarOptions={tabBarOptions}>
+            <Tab.Screen
+              name="Records"
+              component={RecordNavigator}
+              options={recordsOption}
+            />
+            <Tab.Screen name="Students" component={StudentsScreen} />
+          </Tab.Navigator>
+        </NavigationContainer>
+      </ThemeProvider>
+    );
+  } else {
+    return <GeneratorPage />;
+  }
 };
 
 export default App;
