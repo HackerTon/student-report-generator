@@ -11,16 +11,34 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import React, {useState} from 'react';
 import {StatusBar, View} from 'react-native';
-import {Icon, Text, ThemeProvider, Button} from 'react-native-elements';
+import {
+  Icon,
+  Text,
+  ThemeProvider,
+  Button,
+  ListItem,
+} from 'react-native-elements';
 import {FlatList} from 'react-native-gesture-handler';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
-const MarkingScreen = () => {
-  const [marks, setMarks] = useState([]);
-  const [db, setDb] = useState([1, 2, 3, 4]);
-  const [count, setCount] = useState(false);
+const Demo = [
+  [
+    {
+      name: 'alan',
+      level: '2',
+      model: '3',
+      status: 'programming',
+      selected: false,
+    },
+  ],
+];
+
+const MarkingScreen = ({navigation}) => {
+  const [master, setMaster] = useState([]);
+
+  const keyExtractor = (item, index) => index.toString();
 
   const EmptyList = () => (
     <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
@@ -30,19 +48,83 @@ const MarkingScreen = () => {
     </View>
   );
 
+  const RenderItem = ({item}) => {
+    const {name} = item[0];
+
+    return (
+      <View>
+        <Button
+          title={name}
+          onPress={() =>
+            navigation.navigate('StudentPerformance', {name: name})
+          }
+        />
+      </View>
+    );
+  };
+
   return (
     <FlatList
-      style={{backgroundColor: '$black'}}
+      keyExtractor={keyExtractor}
+      data={Demo}
+      style={{backgroundColor: 'black'}}
       ListEmptyComponent={EmptyList}
+      renderItem={RenderItem}
       contentContainerStyle={{backgroundColor: '#191919', minHeight: '100%'}}
     />
   );
 };
 
-const RecordsScreen = () => {
+const RecordsScreen = ({route, navigation}) => {
+  const keyExtractor = (item, index) => index.toString();
+
+  const RenderItem = ({item, index}) => (
+    <ListItem bottomDivider containerStyle={{backgroundColor: 'black'}}>
+      <ListItem.Content>
+        <ListItem.Title>{item[0].name}</ListItem.Title>
+      </ListItem.Content>
+    </ListItem>
+  );
+
   return (
-    <View style={{backgroundColor: '#070707', minHeight: '100%'}}>
-      <Text>Records Screen</Text>
+    <View>
+      <View style={{minHeight: '93.3%'}}>
+        <FlatList
+          style={{backgroundColor: 'black'}}
+          keyExtractor={keyExtractor}
+          data={Demo}
+          renderItem={RenderItem}
+        />
+      </View>
+      <View>
+        <Button
+          title="Create"
+          onPress={() => navigation.navigate('CreatePage')}
+        />
+      </View>
+    </View>
+  );
+};
+
+const StudentPerformance = ({route, navigation}) => {
+  const {name} = route.params;
+
+  return (
+    <View
+      style={{
+        backgroundColor: 'black',
+        height: '100%',
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}>
+      <Text>{name}</Text>
+      <Button
+        title="goback"
+        onPress={() => {
+          navigation.navigate('Records', {done: true});
+        }}
+      />
     </View>
   );
 };
@@ -53,8 +135,11 @@ const RecordNavigator = () => {
       screenOptions={{
         headerStyle: {backgroundColor: '#191919'},
         headerTitleStyle: {color: 'white'},
-      }}>
+      }}
+      initialRouteName="Records">
       <Stack.Screen name="Records" component={RecordsScreen} />
+      <Stack.Screen name="StudentPerformance" component={StudentPerformance} />
+      <Stack.Screen name="CreatePage" component={MarkingScreen} />
     </Stack.Navigator>
   );
 };
