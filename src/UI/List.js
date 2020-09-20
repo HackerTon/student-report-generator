@@ -5,11 +5,11 @@ import {Text, ListItem} from 'react-native-elements';
 const MyList = ({data, style, selection, rendererItem}) => {
   const [selectedId, setSelectedId] = useState(null);
 
-  const keyExtractor = (item, index) => index.toString();
+  const keyExtractor = (_, index) => index.toString();
   const renderItem = rendererItem
     ? rendererItem
     : ({item, index}) => {
-        const color = selectedId === index ? 'grey' : 'white';
+        const color = selectedId === index ? 'grey' : 'black';
         const selector = selection ? selection : () => {};
 
         return (

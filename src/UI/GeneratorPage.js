@@ -1,7 +1,9 @@
 import React, {useState} from 'react';
-import {View, TextInput} from 'react-native';
+import {View, TextInput, Clipboard} from 'react-native';
 import {Button, Text, ListItem} from 'react-native-elements';
 import MyList from './List';
+import {StringGenerator} from '../Helper';
+import moment from 'moment';
 
 const level2 = [
   'Elephant',
@@ -15,16 +17,17 @@ const level2 = [
   'Squirrel',
   'Buffalo',
   'Crocodile',
-  'ImagineI',
+  'Imagine',
 ];
 
 const GeneratorPage = () => {
   const [log, setLog] = useState([]);
   const [name, setName] = useState('');
   const [index, setIndex] = useState(null);
+  const [status, setStatus] = useState('');
 
   const Append = () => {
-    setLog([...log, {name: name, model: level2[index]}]);
+    setLog([...log, {name: name, model: index, status: status}]);
   };
 
   const Renderer = ({item, index}) => {
@@ -42,13 +45,26 @@ const GeneratorPage = () => {
     setLog([...log]);
   };
 
+  const Generate = () => {
+    const date = moment().format('l');
+    const text = StringGenerator(log);
+    const finaltext = `${moment().format('dddd')} ${date} \n ${text}`;
+
+    Clipboard.setString(finaltext);
+    alert(finaltext);
+  };
+
   return (
     <View style={{flex: 1, flexDirection: 'column'}}>
       <TextInput placeholder="Name" onChangeText={(text) => setName(text)} />
+      <TextInput
+        placeholder="Status"
+        onChangeText={(text) => setStatus(text)}
+      />
       <View style={{height: '20%'}}>
         <MyList data={log} rendererItem={Renderer} />
       </View>
-      <View style={{height: '60%'}}>
+      <View style={{height: '50%'}}>
         <MyList data={level2} selection={(index) => setIndex(index)} />
       </View>
       <View
@@ -59,7 +75,7 @@ const GeneratorPage = () => {
         }}>
         <Button title="Append" onPress={Append} />
         <Button title="Clear" onPress={Clear} />
-        <Button title="Generate" />
+        <Button title="Generate" onPress={Generate} />
       </View>
     </View>
   );

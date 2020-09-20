@@ -1115,6 +1115,11 @@
     sudo-prompt "^9.0.0"
     wcwidth "^1.0.1"
 
+"@react-native-community/clipboard@^1.2.3":
+  version "1.2.3"
+  resolved "https://registry.yarnpkg.com/@react-native-community/clipboard/-/clipboard-1.2.3.tgz#1590f6849d9c8a3bc14bbd1aa0f1f3945e4e60ca"
+  integrity sha512-X9dfG/JiLI5pNyAwg3VMd7O3l/PVbYoAy8m12fetLWkBFzgTVEUIwsP0vysZ/29lnlLVM+qJUywcJmat046fvw==
+
 "@react-native-community/eslint-config@^1.1.0":
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@react-native-community/eslint-config/-/eslint-config-1.1.0.tgz#2dacad06dd44d13e778510864473fc6091f080c0"
@@ -5067,6 +5072,11 @@ mkdirp@^0.5.1:
   integrity sha512-NKmAlESf6jMGym1++R0Ra7wvhV+wFW63FaSOFPwRahvea0gMUcGUhVeAg/0BC0wiv9ih5NYPB1Wn1UEI1/L+xQ==
   dependencies:
     minimist "^1.2.5"
+
+moment@^2.28.0:
+  version "2.28.0"
+  resolved "https://registry.yarnpkg.com/moment/-/moment-2.28.0.tgz#cdfe73ce01327cee6537b0fafac2e0f21a237d75"
+  integrity sha512-Z5KOjYmnHyd/ukynmFd/WwyXHd7L4J9vTI/nn5Ap9AVUgaAE15VvQ9MOGmJJygEUklupqIrFnor/tjTwRU+tQw==
 
 ms@2.0.0:
   version "2.0.0"

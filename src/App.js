@@ -9,17 +9,18 @@
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
-import React, {useState} from 'react';
-import {StatusBar, View} from 'react-native';
-import GeneratorPage from './UI/GeneratorPage';
+import React, {useEffect, useState} from 'react';
+import {StatusBar, View, TextInput, FlatList} from 'react-native';
 import {
+  Button,
   Icon,
+  ListItem,
   Text,
   ThemeProvider,
-  Button,
-  ListItem,
 } from 'react-native-elements';
-import {FlatList} from 'react-native-gesture-handler';
+import GeneratorPage from './UI/GeneratorPage';
+import {WriteData, ReadData} from './Helper';
+import MyList from './UI/List';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -146,15 +147,45 @@ const RecordNavigator = () => {
 };
 
 const StudentsScreen = function StudentsScreen({style}) {
+  const [students, setStudents] = useState(null);
+
+  useEffect(() => {
+    Read();
+  }, []);
+
+  const Write = (data) => {
+    WriteData([...students, data]);
+    Read();
+  };
+
+  const Read = () => {
+    ReadData((data) => setStudents(data));
+  };
+
   return (
-    <View style={style}>
-      <Text>Students Screen</Text>
+    <View
+      style={{
+        backgroundColor: 'black',
+        flex: 1,
+        flexDirection: 'column',
+      }}>
+      <TextInput placeholder="Name" placeholderTextColor="white" />
+      <MyList data={students} />
+      <View style={{padding: 5, flexDirection: 'row'}}>
+        <Button
+          title="Add Students"
+          onPress={() => {
+            Write('Test data');
+          }}
+        />
+        <Button title="Remove Students" />
+      </View>
     </View>
   );
 };
 
 const App = () => {
-  const [page, setPage] = useState('main');
+  const [page, setPage] = useState('first');
 
   const tabBarOptions = {
     labelStyle: {fontSize: 13, marginTop: -6},
