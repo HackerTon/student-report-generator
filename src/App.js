@@ -20,7 +20,7 @@ import {
 } from 'react-native-elements';
 import GeneratorPage from './UI/GeneratorPage';
 import {WriteData, ReadData} from './Helper';
-import MyList from './UI/List';
+import {MyList, SpecialList} from './UI/List';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -38,41 +38,27 @@ const Demo = [
 ];
 
 const MarkingScreen = ({navigation}) => {
-  const [master, setMaster] = useState([]);
+  const [students, setStudents] = useState([]);
+  const [slides, setSlides] = useState([]);
 
-  const keyExtractor = (item, index) => index.toString();
+  useEffect(() => {
+    ReadData((data) => setStudents(data));
+  }, []);
 
-  const EmptyList = () => (
-    <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-      <Text style={{color: 'white', fontSize: 20, fontWeight: 'bold'}}>
-        EMPTY
-      </Text>
-    </View>
-  );
-
-  const RenderItem = ({item}) => {
-    const {name} = item[0];
-
-    return (
-      <View>
-        <Button
-          title={name}
-          onPress={() =>
-            navigation.navigate('StudentPerformance', {name: name})
-          }
-        />
-      </View>
-    );
+  const SetSlides = (index) => {
+    if (index in slides) {
+      setSlides(slides.filter((value) => value !== index));
+    } else {
+      setSlides([...slides, index]);
+    }
   };
 
+  console.log(students);
   return (
-    <FlatList
-      keyExtractor={keyExtractor}
-      data={Demo}
+    <SpecialList
+      data={students}
       style={{backgroundColor: 'black'}}
-      ListEmptyComponent={EmptyList}
-      renderItem={RenderItem}
-      contentContainerStyle={{backgroundColor: '#191919', minHeight: '100%'}}
+      selection={SetSlides}
     />
   );
 };
@@ -148,18 +134,31 @@ const RecordNavigator = () => {
 
 const StudentsScreen = function StudentsScreen({style}) {
   const [students, setStudents] = useState(null);
+  const [name, setName] = useState('');
+  const [selectedId, setSelectedId] = useState(null);
 
   useEffect(() => {
     Read();
   }, []);
 
-  const Write = (data) => {
-    WriteData([...students, data]);
-    Read();
+  const Write = () => {
+    if (name !== '') {
+      WriteData([...students, name]);
+      Read();
+    }
   };
 
   const Read = () => {
     ReadData((data) => setStudents(data));
+  };
+
+  const Delete = () => {
+    const arr = students
+      .splice(0, selectedId)
+      .concat(students.splice(selectedId + 1, students.length));
+
+    WriteData(arr);
+    Read();
   };
 
   return (
@@ -169,16 +168,15 @@ const StudentsScreen = function StudentsScreen({style}) {
         flex: 1,
         flexDirection: 'column',
       }}>
-      <TextInput placeholder="Name" placeholderTextColor="white" />
-      <MyList data={students} />
+      <TextInput
+        placeholder="Name"
+        placeholderTextColor="white"
+        onChangeText={(text) => setName(text)}
+      />
+      <MyList data={students} selection={setSelectedId} />
       <View style={{padding: 5, flexDirection: 'row'}}>
-        <Button
-          title="Add Students"
-          onPress={() => {
-            Write('Test data');
-          }}
-        />
-        <Button title="Remove Students" />
+        <Button title="Add Students" onPress={() => Write()} />
+        <Button title="Remove Students" onPress={() => Delete()} />
       </View>
     </View>
   );
