@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
-import {View, FlatList} from 'react-native';
-import {Text, ListItem} from 'react-native-elements';
+import {FlatList, SectionList} from 'react-native';
+import {ListItem} from 'react-native-elements';
 
 const MyList = ({data, style, selection, rendererItem}) => {
   const [selectedId, setSelectedId] = useState(null);
@@ -33,6 +33,57 @@ const MyList = ({data, style, selection, rendererItem}) => {
       extraData={selectedId}
       keyExtractor={keyExtractor}
       renderItem={renderItem}
+      style={style}
+    />
+  );
+};
+
+const MySectionList = ({data, style, selection, rendererItem}) => {
+  const Selector = selection ? selection : () => {};
+
+  const keyExtractor = (item, index) => item + index;
+  const renderItem = rendererItem
+    ? rendererItem
+    : ({item, index, section}) => {
+        const {title} = section;
+
+        return (
+          <ListItem
+            topDivider
+            bottomDivider
+            onPress={() => {
+              selection({title, item});
+            }}
+            containerStyle={{backgroundColor: 'black'}}>
+            <ListItem.Content>
+              <ListItem.Title>{item}</ListItem.Title>
+            </ListItem.Content>
+          </ListItem>
+        );
+      };
+
+  return (
+    <SectionList
+      sections={data}
+      keyExtractor={keyExtractor}
+      renderItem={renderItem}
+      renderSectionHeader={({section}) => {
+        return (
+          <ListItem
+            containerStyle={{
+              backgroundColor: 'black',
+              flex: 1,
+              flexDirection: 'column',
+              alignItems: 'center',
+            }}>
+            <ListItem.Content>
+              <ListItem.Title h4>
+                {String(section.title).toUpperCase()}
+              </ListItem.Title>
+            </ListItem.Content>
+          </ListItem>
+        );
+      }}
       style={style}
     />
   );
@@ -76,4 +127,4 @@ const SpecialList = ({data, style, selection, rendererItem}) => {
     />
   );
 };
-export {MyList, SpecialList};
+export {MyList, SpecialList, MySectionList};

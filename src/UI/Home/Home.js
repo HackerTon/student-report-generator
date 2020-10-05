@@ -1,8 +1,9 @@
 import React from 'react';
 import {View, FlatList} from 'react-native';
-import {TextInput, Text, ListItem, Icon, Button} from 'react-native-elements';
+import {ListItem, Icon, Button} from 'react-native-elements';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {RegistrationScreen} from '../Registration/Registration';
+import RegistrationScreen from '../Regis/Registration';
+import {ReadData, WriteData} from '../../Helper';
 
 const Demo = [
   [
@@ -63,10 +64,10 @@ const Demo = [
 
 const Tab = createBottomTabNavigator();
 
-const HomeScreen = ({route, navigation}) => {
+const HomeScreen = ({navigation}) => {
   const keyExtractor = (_, index) => index.toString();
 
-  const RenderItem = ({item, _}) => (
+  const RenderItem = ({}) => (
     <ListItem
       containerStyle={{
         backgroundColor: 'black',
@@ -95,12 +96,15 @@ const HomeScreen = ({route, navigation}) => {
       </View>
       <View
         style={{
-          flex: 0,
           flexDirection: 'column',
           alignItems: 'flex-end',
           backgroundColor: 'black',
         }}>
-        <Button containerStyle={{margin: 10}} title="Create" />
+        <Button
+          containerStyle={{margin: 10}}
+          title="Create"
+          onPress={() => navigation.navigate('Report')}
+        />
       </View>
     </>
   );
@@ -116,28 +120,27 @@ const HomeNavigator = () => {
     },
   };
 
-  const recordsOption = {
-    tabBarIcon: ({focused, color, size}) => {
+  const homeOptions = {
+    tabBarIcon: ({color}) => {
       return <Icon name="home" type="feather" color={color} size={30}></Icon>;
+    },
+  };
+
+  const registrationOptions = {
+    tabBarIcon: ({color}) => {
+      return <Icon name="user" type="feather" color={color} size={30}></Icon>;
     },
   };
 
   return (
     <Tab.Navigator tabBarOptions={tabBarOptions}>
-      <Tab.Screen name="Home" component={HomeScreen} options={recordsOption} />
-      {/* <Tab.Screen name="Student Registration" component={RegistrationScreen} /> */}
+      <Tab.Screen name="Home" component={HomeScreen} options={homeOptions} />
+      <Tab.Screen
+        name="Registration"
+        component={RegistrationScreen}
+        options={registrationOptions}
+      />
     </Tab.Navigator>
-
-    // <Stack.Navigator
-    //   screenOptions={{
-    //     headerStyle: {backgroundColor: '#191919'},
-    //     headerTitleStyle: {color: 'white'},
-    //   }}
-    //   initialRouteName="Records">
-    //   <Stack.Screen name="Records" component={RecordsScreen} />
-    //   <Stack.Screen name="StudentPerformance" component={StudentPerformance} />
-    //   <Stack.Screen name="CreatePage" component={MarkingScreen} />
-    // </Stack.Navigator>
   );
 };
 

@@ -1,7 +1,10 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
+import {Alert, View} from 'react-native';
+import {Button, Input} from 'react-native-elements';
 import {ReadData, WriteData} from '../../Helper';
+import {MyList} from '../List';
 
-const RegistrationScreen = ({style}) => {
+const RegistrationScreen = () => {
   const [students, setStudents] = useState(null);
   const [name, setName] = useState('');
   const [selectedId, setSelectedId] = useState(null);
@@ -11,8 +14,13 @@ const RegistrationScreen = ({style}) => {
   }, []);
 
   const Write = () => {
-    if (name !== '') {
+    let validator = /^\d+$/;
+
+    if (validator.test(name) || name === '') {
+      Alert.alert('Invalid name', `"${name}", reenter your name.`);
+    } else {
       WriteData([...students, name]);
+      setName('');
       Read();
     }
   };
@@ -37,10 +45,11 @@ const RegistrationScreen = ({style}) => {
         flex: 1,
         flexDirection: 'column',
       }}>
-      <TextInput
+      <Input
         placeholder="Name"
         placeholderTextColor="white"
         onChangeText={(text) => setName(text)}
+        style={{color: 'white'}}
       />
       <MyList data={students} selection={setSelectedId} />
       <View style={{padding: 5, flexDirection: 'row'}}>

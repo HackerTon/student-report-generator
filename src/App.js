@@ -5,10 +5,11 @@ import React, {useState} from 'react';
 import {StatusBar, View} from 'react-native';
 import {Button, ThemeProvider} from 'react-native-elements';
 import GeneratorPage from './UI/GeneratorPage';
+import Form from './UI/Home/Form';
 import HomeNavigator from './UI/Home/Home';
+import ReportStudent from './UI/Home/ReportStudent';
 
 const Stack = createStackNavigator();
-
 
 const App = () => {
   const [page, setPage] = useState('first');
@@ -17,12 +18,12 @@ const App = () => {
     Text: {style: {color: 'white'}},
     Button: {
       containerStyle: {
-        width: '50%',
         borderColor: 'grey',
         borderWidth: 1,
+        padding: 1,
         backgroundColor: 'black',
       },
-      titleStyle: {color: 'white'},
+      titleStyle: {color: 'white', fontSize: 20},
       type: 'clear',
     },
   };
@@ -41,19 +42,10 @@ const App = () => {
           <StatusBar backgroundColor="black" />
           <Stack.Navigator>
             <Stack.Screen name="Records" component={HomeNavigator} />
+            <Stack.Screen name="Report" component={ReportStudent} />
+            <Stack.Screen name="Form" component={Form} />
           </Stack.Navigator>
         </NavigationContainer>
-        {/* <NavigationContainer>
-          <StatusBar backgroundColor="black" />
-          <Tab.Navigator tabBarOptions={tabBarOptions}>
-            <Tab.Screen
-              name="Records"
-              component={RecordNavigator}
-              options={recordsOption}
-            />
-            <Tab.Screen name="Students" component={StudentsScreen} />
-          </Tab.Navigator>
-        </NavigationContainer> */}
       </ThemeProvider>
     );
   } else {
