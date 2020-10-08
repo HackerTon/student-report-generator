@@ -1,84 +1,44 @@
-import React from 'react';
-import {View, FlatList} from 'react-native';
-import {ListItem, Icon, Button, Text} from 'react-native-elements';
+import firestore from '@react-native-firebase/firestore';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import moment from 'moment';
+import React, {useEffect, useState} from 'react';
+import {View} from 'react-native';
+import {Button, Icon, ListItem} from 'react-native-elements';
+import {MyList} from '../List';
 import RegistrationScreen from '../Regis/Registration';
-import {ReadData, WriteData} from '../../Helper';
-
-const Demo = [
-  [
-    {
-      name: 'alan',
-      level: '2',
-      model: '3',
-      status: 'programming',
-      selected: false,
-    },
-  ],
-  [
-    {
-      name: 'alan',
-      level: '2',
-      model: '3',
-      status: 'programming',
-      selected: false,
-    },
-  ],
-  [
-    {
-      name: 'alan',
-      level: '2',
-      model: '3',
-      status: 'programming',
-      selected: false,
-    },
-  ],
-  [
-    {
-      name: 'alan',
-      level: '2',
-      model: '3',
-      status: 'programming',
-      selected: false,
-    },
-  ],
-  [
-    {
-      name: 'alan',
-      level: '2',
-      model: '3',
-      status: 'programming',
-      selected: false,
-    },
-  ],
-  [
-    {
-      name: 'alan',
-      level: '2',
-      model: '3',
-      status: 'programming',
-      selected: false,
-    },
-  ],
-];
 
 const Tab = createBottomTabNavigator();
 
 const HomeScreen = ({navigation}) => {
-  const keyExtractor = (_, index) => index.toString();
+  const [history, setHistory] = useState([]);
 
-  const RenderItem = ({}) => (
+  useEffect(() => {
+    const subscribe = firestore()
+      .collection('history')
+      .orderBy('timecode', 'asc')
+      .onSnapshot((snapshot) => {
+        let history = [];
+        snapshot.forEach((document) => {
+          history.push({...document.data(), id: document.id});
+          setHistory(history);
+        });
+      });
+
+    return () => subscribe();
+  }, []);
+
+  const RenderItem = ({item}) => (
     <ListItem
       containerStyle={{
         backgroundColor: 'black',
         borderColor: 'white',
-        borderWidth: 2,
+        borderWidth: 1.5,
         margin: 10,
       }}>
       <ListItem.Content>
-        <ListItem.Title h4>{'Date'}</ListItem.Title>
+        <ListItem.Title h4>{moment(item.timecode).format('ll')}</ListItem.Title>
         <ListItem.Subtitle style={{color: 'white'}}>
-          {`1. Monday \n2. Tuesday`}
+          {item.txt}
         </ListItem.Subtitle>
       </ListItem.Content>
     </ListItem>
@@ -86,13 +46,8 @@ const HomeScreen = ({navigation}) => {
 
   return (
     <>
-      <View style={{flex: 1}}>
-        <FlatList
-          style={{backgroundColor: 'black'}}
-          keyExtractor={keyExtractor}
-          data={Demo}
-          renderItem={RenderItem}
-        />
+      <View style={{flex: 1, backgroundColor: 'black'}}>
+        <MyList data={history} rendererItem={RenderItem} />
       </View>
       <Button
         icon={<Icon name="add" size={40} color="white" />}

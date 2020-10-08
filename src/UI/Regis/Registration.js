@@ -12,6 +12,7 @@ const RegistrationScreen = () => {
   useEffect(() => {
     const subscribe = firestore()
       .collection('student')
+      .orderBy('name', 'asc')
       .onSnapshot((query) => {
         const students = [];
 

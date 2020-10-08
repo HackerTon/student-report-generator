@@ -1,9 +1,9 @@
 import moment from 'moment';
 import React, {useEffect, useState} from 'react';
-import {Clipboard, View} from 'react-native';
+import {Alert, Clipboard, View} from 'react-native';
 import {Button, ListItem, Text} from 'react-native-elements';
-import {WriteData} from '../../Helper';
 import {MyList} from '../List';
+import firestore from '@react-native-firebase/firestore';
 
 const ReportStudent = ({navigation, route}) => {
   const {params} = route;
@@ -58,16 +58,22 @@ const ReportStudent = ({navigation, route}) => {
   };
 
   const Generate = () => {
-    let text = `${moment().format('dddd l')}\n`;
+    let text = '';
 
     record.forEach(({name, level, model}, index) => {
       text = text.concat(`${index + 1}. ${name} ${level} ${model} \n`);
     });
 
-    WriteData(record, 'records');
+    firestore()
+      .collection('history')
+      .add({timecode: moment.now(), txt: text})
+      .then(() => console.log('history write success'))
+      .catch(() => console.log('history write failure'));
+
+    text = `${moment().format('dddd l')}\n` + text;
 
     Clipboard.setString(text);
-    alert(text);
+    Alert.alert('Copied', text);
   };
 
   const Delete = () => {
