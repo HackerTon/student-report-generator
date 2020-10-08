@@ -1,37 +1,65 @@
-import React, {useEffect, useState} from 'react';
+import firestore from '@react-native-firebase/firestore';
+import React, {useEffect, useReducer} from 'react';
 import {View} from 'react-native';
-import {models, ReadData} from '../../Helper';
+import {models, progress} from '../../Helper';
 import {MyList, MySectionList} from '../List';
+import {ListItem} from 'react-native-elements';
+
+const initialState = {count: 0, student: [], name: null, model: null};
+const reducer = (state, action) => {
+  switch (action.type) {
+    case 'setname':
+      return {...state, name: action.name, count: state.count + 1};
+    case 'setmodellevel':
+      return {
+        ...state,
+        model: action.model,
+        level: action.level,
+        count: state.count + 1,
+      };
+    case 'fillstudent':
+      return {...state, student: action.student};
+    default:
+      throw new Error();
+  }
+};
 
 const MyForm = ({navigation}) => {
-  const [state, setState] = useState(0);
-  const [student, setStudent] = useState([]);
-  const [name, setName] = useState(null);
+  const [state, dispatch] = useReducer(reducer, initialState);
 
   useEffect(() => {
-    ReadData((data) => {
-      setStudent(data);
-    });
+    const subscribe = firestore()
+      .collection('student')
+      .onSnapshot((snapshot) => {
+        let student = [];
+        snapshot.forEach((document) => {
+          student.push({...document.data(), id: document.id});
+        });
+
+        dispatch({type: 'fillstudent', student: student});
+      });
+
+    return () => subscribe();
   }, []);
 
-  switch (state) {
+  const renderItem = ({item}) => {
+    return (
+      <ListItem
+        onPress={() => dispatch({type: 'setname', name: item.name})}
+        containerStyle={{backgroundColor: '#191919'}}>
+        <ListItem.Content>
+          <ListItem.Title>{item.name}</ListItem.Title>
+        </ListItem.Content>
+      </ListItem>
+    );
+  };
+
+  switch (state.count) {
     // student selection
     case 0:
       return (
-        <View style={{flex: 1}}>
-          <MyList
-            data={student}
-            selection={(id) => {
-              setName(student[id]);
-              setState(1);
-            }}
-          />
-          <View
-            style={{
-              flexDirection: 'column',
-              alignItems: 'flex-end',
-              padding: 5,
-            }}></View>
+        <View style={{flex: 1, backgroundColor: 'black'}}>
+          <MyList data={state.student} rendererItem={renderItem} />
         </View>
       );
     // model selection
@@ -41,8 +69,8 @@ const MyForm = ({navigation}) => {
           <View style={{flex: 1, backgroundColor: 'black'}}>
             <MySectionList
               data={models}
-              selection={(data) => {
-                navigation.navigate('Report', {name, ...data});
+              selection={({title, item}) => {
+                dispatch({type: 'setmodellevel', model: item, level: title});
               }}
             />
             <View
@@ -51,6 +79,26 @@ const MyForm = ({navigation}) => {
                 alignItems: 'flex-end',
                 padding: 5,
               }}></View>
+          </View>
+        </>
+      );
+    case 2:
+      return (
+        <>
+          <View style={{flex: 1, backgroundColor: 'black'}}>
+            <MyList
+              data={progress}
+              selection={({item}) => {
+                const {name, level, model} = state;
+
+                navigation.navigate('Report', {
+                  name,
+                  level,
+                  model,
+                  progress: item,
+                });
+              }}
+            />
           </View>
         </>
       );

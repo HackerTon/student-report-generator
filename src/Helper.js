@@ -17,6 +17,7 @@ const models = [
       'Kangaroo',
       'Caterpillar',
       'Tyrannosaurus',
+      'Creative',
     ],
   },
   {
@@ -33,7 +34,7 @@ const models = [
       'Squirrel',
       'Buffalo',
       'Crocodile',
-      'ImagineI',
+      'Imagine',
     ],
   },
   {
@@ -55,6 +56,8 @@ const models = [
   },
 ];
 
+const progress = ['assembling', 'programming', 'done'];
+
 const ValidateName = (text) => {
   let validator = /^\d+$/;
 
@@ -67,7 +70,7 @@ const StringGenerator = (array) => {
   array.forEach((value, index) => {
     const {name, model, status} = value;
     text = text.concat(
-      `${index}. ${name.toString()} - ${level2[model]} ${status} \n\n`,
+      `${index}. ${name.toString()} - ${level[model]} ${status} \n\n`,
     );
   });
 
@@ -100,4 +103,4 @@ const ReadData = async (callback, set) => {
     console.error(`Error during write: ${e}`);
   }
 };
-export {StringGenerator, WriteData, ReadData, ValidateName, models};
+export {StringGenerator, WriteData, ReadData, ValidateName, models, progress};

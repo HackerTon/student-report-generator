@@ -1,41 +1,70 @@
 import React, {useEffect, useState} from 'react';
 import {Alert, View} from 'react-native';
-import {Button, Input} from 'react-native-elements';
+import {Button, Input, Icon, ListItem} from 'react-native-elements';
 import {ReadData, WriteData} from '../../Helper';
 import {MyList} from '../List';
+import firestore from '@react-native-firebase/firestore';
 
 const RegistrationScreen = () => {
-  const [students, setStudents] = useState(null);
-  const [name, setName] = useState('');
-  const [selectedId, setSelectedId] = useState(null);
+  const [students, setStudents] = useState([]);
+  const [name, setName] = useState();
 
   useEffect(() => {
-    Read();
+    const subscribe = firestore()
+      .collection('student')
+      .onSnapshot((query) => {
+        const students = [];
+
+        query.forEach((document) => {
+          students.push({...document.data(), id: document.id});
+        });
+
+        setStudents(students);
+      });
+
+    return () => subscribe;
   }, []);
 
-  const Write = () => {
+  const testname = () => {
     let validator = /^\d+$/;
-
     if (validator.test(name) || name === '') {
-      Alert.alert('Invalid name', `"${name}", reenter your name.`);
+      return 0;
     } else {
-      WriteData([...students, name]);
-      setName('');
-      Read();
+      return 1;
     }
   };
 
-  const Read = () => {
-    ReadData((data) => setStudents(data));
+  const InsertStudent = () => {
+    if (testname()) {
+      firestore()
+        .collection('student')
+        .add({name: name})
+        .then(() => console.log('Inserted data'))
+        .catch((err) => console.error(err));
+      setName('');
+    } else {
+      Alert.alert('Invalid name', `"${name}", reenter your name.`);
+    }
   };
 
-  const Delete = () => {
-    const arr = students
-      .splice(0, selectedId)
-      .concat(students.splice(selectedId + 1, students.length));
+  const RemoveStudent = (docid) => {
+    if (docid) {
+      firestore().collection('student').doc(docid).delete();
+    }
+  };
 
-    WriteData(arr);
-    Read();
+  const renderItem = ({item}) => {
+    return (
+      <ListItem
+        onLongPress={() => {
+          RemoveStudent(item.id);
+        }}
+        containerStyle={{backgroundColor: '#191919'}}>
+        <ListItem.Content>
+          <ListItem.Title>{item.name}</ListItem.Title>
+        </ListItem.Content>
+      </ListItem>
+    );
   };
 
   return (
@@ -51,11 +80,17 @@ const RegistrationScreen = () => {
         onChangeText={(text) => setName(text)}
         style={{color: 'white'}}
       />
-      <MyList data={students} selection={setSelectedId} />
-      <View style={{padding: 5, flexDirection: 'row'}}>
-        <Button title="Add Students" onPress={() => Write()} />
-        <Button title="Remove Students" onPress={() => Delete()} />
-      </View>
+      <MyList data={students} rendererItem={renderItem} />
+      <Button
+        onPress={InsertStudent}
+        icon={<Icon name="add" size={40} color="white" />}
+        containerStyle={{
+          position: 'absolute',
+          right: 10,
+          bottom: 10,
+          borderRadius: 100,
+        }}
+      />
     </View>
   );
 };

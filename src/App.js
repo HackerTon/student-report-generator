@@ -1,4 +1,3 @@
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import React, {useState} from 'react';
@@ -28,19 +27,25 @@ const App = () => {
     },
   };
 
-  if (page == 'main') {
+  if (page === 'main') {
     return (
       <View>
         <Button title="first" onPress={() => setPage('first')} />
         <Button title="second" onPress={() => setPage('second')} />
       </View>
     );
-  } else if (page == 'first') {
+  } else if (page === 'first') {
     return (
       <ThemeProvider theme={theme}>
         <NavigationContainer>
           <StatusBar backgroundColor="black" />
-          <Stack.Navigator>
+          <Stack.Navigator
+            screenOptions={{
+              headerStyle: {backgroundColor: '#191919'},
+              headerTitleStyle: {color: 'white'},
+              headerTintColor: 'white',
+              animationTypeForReplace: 'push',
+            }}>
             <Stack.Screen name="Records" component={HomeNavigator} />
             <Stack.Screen name="Report" component={ReportStudent} />
             <Stack.Screen name="Form" component={Form} />

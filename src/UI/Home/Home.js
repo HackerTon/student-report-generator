@@ -1,6 +1,6 @@
 import React from 'react';
 import {View, FlatList} from 'react-native';
-import {ListItem, Icon, Button} from 'react-native-elements';
+import {ListItem, Icon, Button, Text} from 'react-native-elements';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import RegistrationScreen from '../Regis/Registration';
 import {ReadData, WriteData} from '../../Helper';
@@ -94,18 +94,18 @@ const HomeScreen = ({navigation}) => {
           renderItem={RenderItem}
         />
       </View>
-      <View
-        style={{
-          flexDirection: 'column',
-          alignItems: 'flex-end',
-          backgroundColor: 'black',
-        }}>
-        <Button
-          containerStyle={{margin: 10}}
-          title="Create"
-          onPress={() => navigation.navigate('Report')}
-        />
-      </View>
+      <Button
+        icon={<Icon name="add" size={40} color="white" />}
+        onPress={() => {
+          navigation.navigate('Report');
+        }}
+        containerStyle={{
+          position: 'absolute',
+          right: 10,
+          bottom: 10,
+          borderRadius: 100,
+        }}
+      />
     </>
   );
 };

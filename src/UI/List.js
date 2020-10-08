@@ -14,10 +14,9 @@ const MyList = ({data, style, selection, rendererItem}) => {
 
         return (
           <ListItem
-            bottomDivider
             onPress={() => {
               setSelectedId(index);
-              selector(index);
+              selector({item, index});
             }}
             containerStyle={{backgroundColor: color}}>
             <ListItem.Content>
@@ -52,11 +51,11 @@ const MySectionList = ({data, style, selection, rendererItem}) => {
             topDivider
             bottomDivider
             onPress={() => {
-              selection({title, item});
+              selection({title, item, index});
             }}
             containerStyle={{backgroundColor: 'black'}}>
             <ListItem.Content>
-              <ListItem.Title>{item}</ListItem.Title>
+              <ListItem.Title>{`${index + 1}. ${item}`}</ListItem.Title>
             </ListItem.Content>
           </ListItem>
         );
