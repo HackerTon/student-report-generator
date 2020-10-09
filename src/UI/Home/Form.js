@@ -3,9 +3,15 @@ import React, {useEffect, useReducer} from 'react';
 import {View} from 'react-native';
 import {models, progress} from '../../Helper';
 import {MyList, MySectionList} from '../List';
-import {ListItem} from 'react-native-elements';
+import {ListItem, Input} from 'react-native-elements';
 
-const initialState = {count: 0, student: [], name: null, model: null};
+const initialState = {
+  count: 0,
+  student: [],
+  name: null,
+  model: null,
+  query: '',
+};
 const reducer = (state, action) => {
   switch (action.type) {
     case 'setname':
@@ -19,6 +25,8 @@ const reducer = (state, action) => {
       };
     case 'fillstudent':
       return {...state, student: action.student};
+    case 'setquery':
+      return {...state, query: action.query};
     default:
       throw new Error();
   }
@@ -30,6 +38,7 @@ const MyForm = ({navigation}) => {
   useEffect(() => {
     const subscribe = firestore()
       .collection('student')
+      .orderBy('name', 'asc')
       .onSnapshot((snapshot) => {
         let student = [];
         snapshot.forEach((document) => {
@@ -54,12 +63,25 @@ const MyForm = ({navigation}) => {
     );
   };
 
+  let data =
+    state.query === ''
+      ? state.student
+      : state.student.filter((value) =>
+          value.name.search(new RegExp(`^${state.query}`, 'i')) ? false : true,
+        );
   switch (state.count) {
     // student selection
     case 0:
       return (
         <View style={{flex: 1, backgroundColor: 'black'}}>
-          <MyList data={state.student} rendererItem={renderItem} />
+          <Input
+            placeholder={'Name'}
+            value={state.query}
+            placeholderTextColor="white"
+            onChangeText={(text) => dispatch({type: 'setquery', query: text})}
+            style={{color: 'white'}}
+          />
+          <MyList data={data} rendererItem={renderItem} />
         </View>
       );
     // model selection

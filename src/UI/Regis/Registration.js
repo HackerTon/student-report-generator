@@ -7,7 +7,7 @@ import firestore from '@react-native-firebase/firestore';
 
 const RegistrationScreen = () => {
   const [students, setStudents] = useState([]);
-  const [name, setName] = useState();
+  const [name, setName] = useState('');
 
   useEffect(() => {
     const subscribe = firestore()
@@ -40,9 +40,11 @@ const RegistrationScreen = () => {
       firestore()
         .collection('student')
         .add({name: name})
-        .then(() => console.log('Inserted data'))
-        .catch((err) => console.error(err));
-      setName('');
+        .then(() => {
+          console.log('write student successful');
+          setName('');
+        })
+        .catch((err) => 'write student failure');
     } else {
       Alert.alert('Invalid name', `"${name}", reenter your name.`);
     }
@@ -76,7 +78,8 @@ const RegistrationScreen = () => {
         flexDirection: 'column',
       }}>
       <Input
-        placeholder="Name"
+        placeholder={'Name'}
+        value={name}
         placeholderTextColor="white"
         onChangeText={(text) => setName(text)}
         style={{color: 'white'}}
