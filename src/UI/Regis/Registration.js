@@ -1,13 +1,14 @@
+import firestore from '@react-native-firebase/firestore';
 import React, {useEffect, useState} from 'react';
 import {Alert, View} from 'react-native';
-import {Button, Input, Icon, ListItem} from 'react-native-elements';
-import {ReadData, WriteData} from '../../Helper';
+import {Button, Icon, Input, ListItem} from 'react-native-elements';
 import {MyList} from '../List';
-import firestore from '@react-native-firebase/firestore';
+import {Picker} from '@react-native-community/picker';
 
 const RegistrationScreen = () => {
   const [students, setStudents] = useState([]);
   const [name, setName] = useState('');
+  const [classday, setClassday] = useState('wed');
 
   useEffect(() => {
     const subscribe = firestore()
@@ -37,14 +38,22 @@ const RegistrationScreen = () => {
 
   const InsertStudent = () => {
     if (testname()) {
-      firestore()
-        .collection('student')
-        .add({name: name})
-        .then(() => {
-          console.log('write student successful');
-          setName('');
-        })
-        .catch((err) => 'write student failure');
+      const query = firestore().collection('student').where('name', '==', name);
+
+      query.get().then((snapshot) => {
+        const isEmpty = snapshot.empty;
+        if (isEmpty) {
+          firestore()
+            .collection('student')
+            .add({name: name, classday: classday})
+            .then(() => {
+              console.log('write student successful');
+            })
+            .catch((err) => 'write student failure');
+        } else {
+          Alert.alert('Duplicate found', 'System found entry with same name');
+        }
+      });
     } else {
       Alert.alert('Invalid name', `"${name}", reenter your name.`);
     }
@@ -78,12 +87,22 @@ const RegistrationScreen = () => {
         flexDirection: 'column',
       }}>
       <Input
-        placeholder={'Name'}
-        value={name}
+        placeholder="Name"
         placeholderTextColor="white"
+        value={name}
+        onTouchStart={() => setName('')}
         onChangeText={(text) => setName(text)}
         style={{color: 'white'}}
       />
+      <Picker
+        selectedValue={classday}
+        onValueChange={(value) => setClassday(value)}
+        style={{backgroundColor: 'grey', marginBottom: 10}}
+        prompt="Day">
+        <Picker.Item label="wednesday" value="wed" />
+        <Picker.Item label="friday" value="fri" />
+        <Picker.Item label="saturday" value="sat" />
+      </Picker>
       <MyList data={students} rendererItem={renderItem} />
       <Button
         onPress={InsertStudent}

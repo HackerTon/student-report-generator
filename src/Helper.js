@@ -54,6 +54,7 @@ const models = [
       'My own robot',
     ],
   },
+  {title: 'miscellaneous', data: ['Absent']},
 ];
 
 const progress = ['assembling', 'programming', 'done'];

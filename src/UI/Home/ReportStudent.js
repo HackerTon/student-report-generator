@@ -60,8 +60,10 @@ const ReportStudent = ({navigation, route}) => {
   const Generate = () => {
     let text = '';
 
-    record.forEach(({name, level, model}, index) => {
-      text = text.concat(`${index + 1}. ${name} ${level} ${model} \n`);
+    record.forEach(({name, level, model, progress}, index) => {
+      text = text.concat(
+        `${index + 1}. ${name} ${level} ${model} ${progress}\n`,
+      );
     });
 
     firestore()

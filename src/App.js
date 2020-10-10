@@ -45,6 +45,7 @@ const App = () => {
               headerTitleStyle: {color: 'white'},
               headerTintColor: 'white',
               animationTypeForReplace: 'push',
+              animationEnabled: false,
             }}>
             <Stack.Screen name="Records" component={HomeNavigator} />
             <Stack.Screen name="Report" component={ReportStudent} />

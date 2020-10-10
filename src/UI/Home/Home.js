@@ -15,7 +15,7 @@ const HomeScreen = ({navigation}) => {
   useEffect(() => {
     const subscribe = firestore()
       .collection('history')
-      .orderBy('timecode', 'asc')
+      .orderBy('timecode', 'desc')
       .onSnapshot((snapshot) => {
         let history = [];
         snapshot.forEach((document) => {
