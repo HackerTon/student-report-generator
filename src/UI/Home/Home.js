@@ -2,10 +2,11 @@ import firestore from '@react-native-firebase/firestore';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import moment from 'moment';
 import React, {useEffect, useState} from 'react';
-import {View} from 'react-native';
+import {View, Alert} from 'react-native';
 import {Button, Icon, ListItem} from 'react-native-elements';
 import {MyList} from '../List';
 import RegistrationScreen from '../Regis/Registration';
+import {LongPressGestureHandler, State} from 'react-native-gesture-handler';
 
 const Tab = createBottomTabNavigator();
 
@@ -28,20 +29,33 @@ const HomeScreen = ({navigation}) => {
   }, []);
 
   const RenderItem = ({item}) => (
-    <ListItem
-      containerStyle={{
-        backgroundColor: 'black',
-        borderColor: 'white',
-        borderWidth: 1.5,
-        margin: 10,
+    <LongPressGestureHandler
+      onHandlerStateChange={({nativeEvent}) => {
+        if (nativeEvent.state === State.ACTIVE) {
+          firestore()
+            .collection('history')
+            .doc(item.id)
+            .delete()
+            .catch(() => Alert.alert('Warning', 'Write failure.'));
+        }
       }}>
-      <ListItem.Content>
-        <ListItem.Title h4>{moment(item.timecode).format('ll')}</ListItem.Title>
-        <ListItem.Subtitle style={{color: 'white'}}>
-          {item.txt}
-        </ListItem.Subtitle>
-      </ListItem.Content>
-    </ListItem>
+      <ListItem
+        containerStyle={{
+          backgroundColor: 'black',
+          borderColor: 'white',
+          borderWidth: 1.5,
+          margin: 10,
+        }}>
+        <ListItem.Content>
+          <ListItem.Title h4>
+            {moment(item.timecode).format('ll')}
+          </ListItem.Title>
+          <ListItem.Subtitle style={{color: 'white'}}>
+            {item.txt}
+          </ListItem.Subtitle>
+        </ListItem.Content>
+      </ListItem>
+    </LongPressGestureHandler>
   );
 
   return (

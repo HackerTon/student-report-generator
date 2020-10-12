@@ -23,6 +23,31 @@ const ReportStudent = ({navigation, route}) => {
     }
   }, [params]);
 
+  useEffect(
+    () =>
+      navigation.addListener('beforeRemove', (e) => {
+        if (record < 1) {
+          return;
+        }
+
+        e.preventDefault();
+
+        Alert.alert(
+          'Discard changes?',
+          'You have unsaved changes. Do you still want to discard?',
+          [
+            {text: "Don't leave", style: 'cancel', onPress: () => {}},
+            {
+              text: 'Discard',
+              style: 'destructive',
+              onPress: () => navigation.dispatch(e.data.action),
+            },
+          ],
+        );
+      }),
+    [record],
+  );
+
   const renderItem = ({item, index}) => {
     return (
       <ListItem bottomDivider containerStyle={{backgroundColor: 'black'}}>
@@ -60,22 +85,24 @@ const ReportStudent = ({navigation, route}) => {
   const Generate = () => {
     let text = '';
 
+    if (record.length < 1) {
+      return;
+    }
+
     record.forEach(({name, level, model, progress}, index) => {
       text = text.concat(
-        `${index + 1}. ${name} ${level} ${model} ${progress}\n`,
+        `${index + 1}. ${name} ${level} ${model} ${progress}\n\n`,
       );
     });
 
     firestore()
       .collection('history')
       .add({timecode: moment.now(), txt: text})
-      .then(() => console.log('history write success'))
-      .catch(() => console.log('history write failure'));
+      .catch(() => Alert.alert('Warning', 'Write failure.'));
 
     text = `${moment().format('dddd l')}\n` + text;
-
     Clipboard.setString(text);
-    Alert.alert('Copied', text);
+    Alert.alert('Information', 'Copied generated text.');
   };
 
   const Delete = () => {
