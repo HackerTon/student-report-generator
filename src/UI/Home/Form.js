@@ -1,9 +1,9 @@
 import firestore from '@react-native-firebase/firestore';
-import React, {useEffect, useReducer} from 'react';
+import React, {useEffect, useReducer, useState} from 'react';
 import {View} from 'react-native';
+import {Input, ListItem, Text} from 'react-native-elements';
 import {models, progress} from '../../Helper';
 import {MyList, MySectionList} from '../List';
-import {ListItem, Input} from 'react-native-elements';
 
 const initialState = {
   count: 0,
@@ -39,7 +39,8 @@ const MyForm = ({navigation}) => {
     const subscribe = firestore()
       .collection('student')
       .orderBy('name', 'asc')
-      .onSnapshot((snapshot) => {
+      .get()
+      .then((snapshot) => {
         let student = [];
         snapshot.forEach((document) => {
           student.push({...document.data(), id: document.id});
@@ -47,8 +48,6 @@ const MyForm = ({navigation}) => {
 
         dispatch({type: 'fillstudent', student: student});
       });
-
-    return () => subscribe();
   }, []);
 
   const renderItem = ({item}) => {
@@ -69,6 +68,7 @@ const MyForm = ({navigation}) => {
       : state.student.filter((value) =>
           value.name.search(new RegExp(`^${state.query}`, 'i')) ? false : true,
         );
+
   switch (state.count) {
     // student selection
     case 0:

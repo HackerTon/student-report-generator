@@ -97,7 +97,7 @@ const ReportStudent = ({navigation, route}) => {
 
     firestore()
       .collection('history')
-      .add({timecode: moment.now(), txt: text})
+      .add({timecode: firestore.FieldValue.serverTimestamp(), txt: text})
       .catch(() => Alert.alert('Warning', 'Write failure.'));
 
     text = `${moment().format('dddd l')}\n` + text;
