@@ -9,7 +9,6 @@ const MyList = ({data, style, selection, rendererItem}) => {
   const renderItem = rendererItem
     ? rendererItem
     : ({item, index}) => {
-        const color = selectedId === index ? 'grey' : 'black';
         const selector = selection ? selection : () => {};
 
         return (
@@ -18,7 +17,7 @@ const MyList = ({data, style, selection, rendererItem}) => {
               setSelectedId(index);
               selector({item, index});
             }}
-            containerStyle={{backgroundColor: color}}>
+            containerStyle={{backgroundColor: '#191919'}}>
             <ListItem.Content>
               <ListItem.Title>{item}</ListItem.Title>
             </ListItem.Content>

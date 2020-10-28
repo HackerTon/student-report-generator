@@ -14,17 +14,7 @@ const App = () => {
   const [page, setPage] = useState('first');
 
   const theme = {
-    Text: {style: {color: 'white'}},
-    Button: {
-      containerStyle: {
-        borderColor: 'grey',
-        borderWidth: 1,
-        padding: 1,
-        backgroundColor: 'black',
-      },
-      titleStyle: {color: 'white', fontSize: 20},
-      type: 'clear',
-    },
+    Text: {style: {color: '#FFFFFF', opacity: 0.87}},
   };
 
   if (page === 'main') {
@@ -42,8 +32,8 @@ const App = () => {
           <Stack.Navigator
             screenOptions={{
               headerStyle: {backgroundColor: '#191919'},
-              headerTitleStyle: {color: 'white'},
-              headerTintColor: 'white',
+              headerTintColor: '#FFFFFF',
+              headerTitleStyle: {color: '#FFFFFF', opacity: 0.87},
               animationTypeForReplace: 'push',
               animationEnabled: false,
             }}>

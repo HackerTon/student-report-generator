@@ -1,9 +1,9 @@
+import {Picker} from '@react-native-community/picker';
 import firestore from '@react-native-firebase/firestore';
 import React, {useEffect, useState} from 'react';
 import {Alert, View} from 'react-native';
-import {Button, Icon, Input, ListItem} from 'react-native-elements';
-import {MyList} from '../List';
-import {Picker} from '@react-native-community/picker';
+import {Button, Icon, Input, Text} from 'react-native-elements';
+import {FlatList} from 'react-native-gesture-handler';
 
 const RegistrationScreen = () => {
   const [students, setStudents] = useState([]);
@@ -67,15 +67,25 @@ const RegistrationScreen = () => {
 
   const renderItem = ({item}) => {
     return (
-      <ListItem
-        onLongPress={() => {
-          RemoveStudent(item.id);
-        }}
-        containerStyle={{backgroundColor: '#191919'}}>
-        <ListItem.Content>
-          <ListItem.Title>{item.name}</ListItem.Title>
-        </ListItem.Content>
-      </ListItem>
+      <View
+        style={{
+          flex: 1,
+          paddingVertical: 20,
+          paddingLeft: 20,
+          marginHorizontal: 10,
+          marginVertical: 5,
+          backgroundColor: '#191919',
+          borderRadius: 8,
+          elevation: 1,
+          justifyContent: 'center',
+        }}>
+        <Text
+          style={{
+            fontSize: 17,
+          }}>
+          {item.name}
+        </Text>
+      </View>
     );
   };
 
@@ -103,16 +113,22 @@ const RegistrationScreen = () => {
         <Picker.Item label="friday" value="fri" />
         <Picker.Item label="saturday" value="sat" />
       </Picker>
-      <MyList data={students} rendererItem={renderItem} />
+      <FlatList
+        data={students}
+        renderItem={renderItem}
+        ItemSeparatorComponent={() => <View></View>}
+      />
       <Button
-        onPress={InsertStudent}
-        icon={<Icon name="add" size={40} color="white" />}
+        type="clear"
         containerStyle={{
+          backgroundColor: '#BB86FC',
           position: 'absolute',
           right: 10,
           bottom: 10,
           borderRadius: 100,
         }}
+        icon={<Icon name="add" size={40} color="black" />}
+        onPress={InsertStudent}
       />
     </View>
   );
