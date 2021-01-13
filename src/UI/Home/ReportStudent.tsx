@@ -1,9 +1,9 @@
+import firestore from '@react-native-firebase/firestore';
 import moment from 'moment';
 import React, {useEffect, useState} from 'react';
 import {Alert, Clipboard, View} from 'react-native';
-import {Button, ListItem, Text, Icon} from 'react-native-elements';
+import {Button, Icon, Text} from 'react-native-elements';
 import {MyList} from '../List';
-import firestore from '@react-native-firebase/firestore';
 
 type Props = {
   text: string;

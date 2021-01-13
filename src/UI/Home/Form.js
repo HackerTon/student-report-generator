@@ -1,7 +1,7 @@
 import firestore from '@react-native-firebase/firestore';
-import React, {useEffect, useReducer, useState} from 'react';
+import React, {useEffect, useReducer} from 'react';
 import {View} from 'react-native';
-import {Input, ListItem, Text} from 'react-native-elements';
+import {Input, Text} from 'react-native-elements';
 import {models, progress} from '../../Helper';
 import {MyList, MySectionList} from '../List';
 
@@ -52,13 +52,31 @@ const MyForm = ({navigation}) => {
 
   const renderItem = ({item}) => {
     return (
-      <ListItem
-        onPress={() => dispatch({type: 'setname', name: item.name})}
-        containerStyle={{backgroundColor: '#191919'}}>
-        <ListItem.Content>
-          <ListItem.Title>{item.name}</ListItem.Title>
-        </ListItem.Content>
-      </ListItem>
+      <>
+        <View style={{marginLeft: 10}}>
+          <Text
+            style={{}}
+            onPress={() => dispatch({type: 'setname', name: item.name})}>
+            {item.name}
+          </Text>
+        </View>
+        <View
+          style={{
+            marginVertical: 10,
+            backgroundColor: '#121212',
+            width: '90%',
+            marginLeft: '5%',
+            height: 2,
+          }}></View>
+      </>
+
+      // <ListItem
+      //   onPress={() => dispatch({type: 'setname', name: item.name})}
+      //   containerStyle={{backgroundColor: '#191919'}}>
+      //   <ListItem.Content>
+      //     <ListItem.Title>{item.name}</ListItem.Title>
+      //   </ListItem.Content>
+      // </ListItem>
     );
   };
 
