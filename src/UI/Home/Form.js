@@ -1,7 +1,8 @@
 import firestore from '@react-native-firebase/firestore';
 import React, {useEffect, useReducer} from 'react';
 import {View} from 'react-native';
-import {Input, Text} from 'react-native-elements';
+import {Text} from 'react-native-elements';
+import {TextInput, TouchableOpacity} from 'react-native-gesture-handler';
 import {models, progress} from '../../Helper';
 import {MyList, MySectionList} from '../List';
 
@@ -12,6 +13,7 @@ const initialState = {
   model: null,
   query: '',
 };
+
 const reducer = (state, action) => {
   switch (action.type) {
     case 'setname':
@@ -36,7 +38,7 @@ const MyForm = ({navigation}) => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   useEffect(() => {
-    const subscribe = firestore()
+    firestore()
       .collection('student')
       .orderBy('name', 'asc')
       .get()
@@ -52,31 +54,23 @@ const MyForm = ({navigation}) => {
 
   const renderItem = ({item}) => {
     return (
-      <>
-        <View style={{marginLeft: 10}}>
-          <Text
-            style={{}}
-            onPress={() => dispatch({type: 'setname', name: item.name})}>
-            {item.name}
-          </Text>
-        </View>
-        <View
+      <TouchableOpacity
+        style={{
+          marginHorizontal: 10,
+          marginVertical: 5,
+          padding: 10,
+          backgroundColor: '#191919',
+          borderRadius: 8,
+          elevation: 1,
+        }}
+        onPress={() => dispatch({type: 'setname', name: item.name})}>
+        <Text
           style={{
-            marginVertical: 10,
-            backgroundColor: '#121212',
-            width: '90%',
-            marginLeft: '5%',
-            height: 2,
-          }}></View>
-      </>
-
-      // <ListItem
-      //   onPress={() => dispatch({type: 'setname', name: item.name})}
-      //   containerStyle={{backgroundColor: '#191919'}}>
-      //   <ListItem.Content>
-      //     <ListItem.Title>{item.name}</ListItem.Title>
-      //   </ListItem.Content>
-      // </ListItem>
+            fontSize: 17,
+          }}>
+          {item.name}
+        </Text>
+      </TouchableOpacity>
     );
   };
 
@@ -91,15 +85,25 @@ const MyForm = ({navigation}) => {
     // student selection
     case 0:
       return (
-        <View style={{flex: 1, backgroundColor: 'black'}}>
-          <Input
-            placeholder={'Name'}
-            value={state.query}
-            placeholderTextColor="white"
-            onChangeText={(text) => dispatch({type: 'setquery', query: text})}
-            style={{color: 'white'}}
-          />
-          <MyList data={data} rendererItem={renderItem} />
+        <View style={{height: '100%', backgroundColor: '#121212'}}>
+          <View style={{marginTop: 10, marginHorizontal: 5}}>
+            <TextInput
+              placeholder={'Name'}
+              value={state.query}
+              placeholderTextColor="white"
+              onChangeText={(text) => dispatch({type: 'setquery', query: text})}
+              style={{
+                fontSize: 20,
+                color: 'white',
+                backgroundColor: '#191919',
+                borderRadius: 8,
+                paddingLeft: 10,
+              }}
+            />
+          </View>
+          <View style={{paddingVertical: 20}}>
+            <MyList data={data} rendererItem={renderItem} />
+          </View>
         </View>
       );
     // model selection
@@ -124,23 +128,21 @@ const MyForm = ({navigation}) => {
       );
     case 2:
       return (
-        <>
-          <View style={{flex: 1, backgroundColor: 'black'}}>
-            <MyList
-              data={progress}
-              selection={({item}) => {
-                const {name, level, model} = state;
+        <View style={{flex: 1, backgroundColor: 'black'}}>
+          <MyList
+            data={progress}
+            selection={({item}) => {
+              const {name, level, model} = state;
 
-                navigation.navigate('Report', {
-                  name,
-                  level,
-                  model,
-                  progress: item,
-                });
-              }}
-            />
-          </View>
-        </>
+              navigation.navigate('Report', {
+                name,
+                level,
+                model,
+                progress: item,
+              });
+            }}
+          />
+        </View>
       );
   }
 };

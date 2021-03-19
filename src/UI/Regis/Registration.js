@@ -2,8 +2,59 @@ import {Picker} from '@react-native-community/picker';
 import firestore from '@react-native-firebase/firestore';
 import React, {useEffect, useState} from 'react';
 import {Alert, View} from 'react-native';
-import {Button, Icon, Input, Text} from 'react-native-elements';
-import {FlatList} from 'react-native-gesture-handler';
+import {Button, Icon, Text} from 'react-native-elements';
+import {FlatList, TextInput} from 'react-native-gesture-handler';
+import {testname} from '../../Helper';
+
+const renderItem = ({item}) => {
+  return (
+    <View
+      style={{
+        marginHorizontal: 10,
+        marginVertical: 5,
+        padding: 10,
+        backgroundColor: '#191919',
+        borderRadius: 8,
+        elevation: 1,
+      }}>
+      <Text
+        style={{
+          fontSize: 17,
+        }}>
+        {item.name}
+      </Text>
+    </View>
+  );
+};
+
+const InsertStudent = ({name, classday}) => {
+  if (testname(name)) {
+    const query = firestore().collection('student').where('name', '==', name);
+
+    query.get().then((snapshot) => {
+      const isEmpty = snapshot.empty;
+      if (isEmpty) {
+        firestore()
+          .collection('student')
+          .add({name: name, classday: classday})
+          .then(() => {
+            console.log('write student successful');
+          })
+          .catch((err) => 'write student failure');
+      } else {
+        Alert.alert('Duplicate found', 'System found entry with same name');
+      }
+    });
+  } else {
+    Alert.alert('Invalid name', `"${name}", reenter your name.`);
+  }
+};
+
+const RemoveStudent = (docid) => {
+  if (docid) {
+    firestore().collection('student').doc(docid).delete();
+  }
+};
 
 const RegistrationScreen = () => {
   const [students, setStudents] = useState([]);
@@ -24,99 +75,50 @@ const RegistrationScreen = () => {
         setStudents(students);
       });
 
-    return () => subscribe;
+    return subscribe;
   }, []);
-
-  const testname = () => {
-    let validator = /^\d+$/;
-    if (validator.test(name) || name === '') {
-      return 0;
-    } else {
-      return 1;
-    }
-  };
-
-  const InsertStudent = () => {
-    if (testname()) {
-      const query = firestore().collection('student').where('name', '==', name);
-
-      query.get().then((snapshot) => {
-        const isEmpty = snapshot.empty;
-        if (isEmpty) {
-          firestore()
-            .collection('student')
-            .add({name: name, classday: classday})
-            .then(() => {
-              console.log('write student successful');
-            })
-            .catch((err) => 'write student failure');
-        } else {
-          Alert.alert('Duplicate found', 'System found entry with same name');
-        }
-      });
-    } else {
-      Alert.alert('Invalid name', `"${name}", reenter your name.`);
-    }
-  };
-
-  const RemoveStudent = (docid) => {
-    if (docid) {
-      firestore().collection('student').doc(docid).delete();
-    }
-  };
-
-  const renderItem = ({item}) => {
-    return (
-      <View
-        style={{
-          flex: 1,
-          paddingVertical: 20,
-          paddingLeft: 20,
-          marginHorizontal: 10,
-          marginVertical: 5,
-          backgroundColor: '#191919',
-          borderRadius: 8,
-          elevation: 1,
-          justifyContent: 'center',
-        }}>
-        <Text
-          style={{
-            fontSize: 17,
-          }}>
-          {item.name}
-        </Text>
-      </View>
-    );
-  };
 
   return (
     <View
       style={{
-        backgroundColor: 'black',
-        flex: 1,
-        flexDirection: 'column',
+        backgroundColor: '#121212',
+        height: '100%',
       }}>
-      <Input
-        placeholder="Name"
-        placeholderTextColor="white"
-        value={name}
-        onTouchStart={() => setName('')}
-        onChangeText={(text) => setName(text)}
-        style={{color: 'white'}}
-      />
-      <Picker
-        selectedValue={classday}
-        onValueChange={(value) => setClassday(value)}
-        style={{backgroundColor: 'grey', marginBottom: 10}}
-        prompt="Day">
-        <Picker.Item label="wednesday" value="wed" />
-        <Picker.Item label="friday" value="fri" />
-        <Picker.Item label="saturday" value="sat" />
-      </Picker>
+      <View
+        style={{
+          marginTop: 10,
+          marginHorizontal: 5,
+        }}>
+        <TextInput
+          placeholder="Name to register"
+          placeholderTextColor="white"
+          value={name}
+          onTouchStart={() => setName('')}
+          onChangeText={(text) => setName(text)}
+          style={{
+            fontSize: 20,
+            color: 'white',
+            backgroundColor: '#191919',
+            borderRadius: 8,
+            paddingLeft: 10,
+          }}
+        />
+      </View>
+      <View style={{paddingLeft: 5}}>
+        <Picker
+          style={{color: 'white'}}
+          selectedValue={classday}
+          onValueChange={(value) => setClassday(value)}
+          prompt="Day">
+          <Picker.Item label="wednesday" value="wed" />
+          <Picker.Item label="friday" value="fri" />
+          <Picker.Item label="saturday" value="sat" />
+        </Picker>
+      </View>
       <FlatList
         data={students}
         renderItem={renderItem}
-        ItemSeparatorComponent={() => <View></View>}
+        contentContainerStyle={{paddingVertical: 20}}
       />
       <Button
         type="clear"
@@ -128,7 +130,7 @@ const RegistrationScreen = () => {
           borderRadius: 100,
         }}
         icon={<Icon name="add" size={40} color="black" />}
-        onPress={InsertStudent}
+        onPress={() => InsertStudent({name, classday})}
       />
     </View>
   );

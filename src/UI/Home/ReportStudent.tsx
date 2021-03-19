@@ -82,38 +82,6 @@ const ReportStudent = ({navigation, route}) => {
           {item.level} {item.model} {item.progress}
         </Text>
       </View>
-      // <ListItem bottomDivider containerStyle={{backgroundColor: 'black'}}>
-      //   <ListItem.Content>
-      //     <ListItem.Title style={{fontWeight: 'bold'}}>
-      //       {item.name}
-      //     </ListItem.Title>
-      //     <ListItem.Subtitle style={{color: 'white'}}>
-      //       {`${item.level} ${item.model} ${item.progress}`}
-      //     </ListItem.Subtitle>
-      //   </ListItem.Content>
-      // </ListItem>
-    );
-  };
-
-  const SmallBox = (props: Props) => {
-    let {text} = props;
-    text = text ? text : '0';
-
-    return (
-      <View
-        style={{
-          margin: 5,
-          paddingLeft: 20,
-          paddingTop: 15,
-          paddingRight: 20,
-          paddingBottom: 10,
-          backgroundColor: '#191919',
-          borderRadius: 8,
-          elevation: 1,
-        }}>
-        <Text style={{opacity: 0.6, fontSize: 17}}>Student Count</Text>
-        <Text style={{paddingTop: 2, fontSize: 24}}>{text}</Text>
-      </View>
     );
   };
 
@@ -137,7 +105,15 @@ const ReportStudent = ({navigation, route}) => {
 
     text = `${moment().format('dddd l')}\n` + text;
     Clipboard.setString(text);
-    Alert.alert('Information', 'Copied generated text.');
+    Alert.alert('Information', 'Copied generated text.', [
+      {
+        text: 'OK',
+        style: 'default',
+        onPress: () => {
+          navigation.navigate('Home');
+        },
+      },
+    ]);
   };
 
   const Delete = (mutable: Record[]) => {
@@ -148,15 +124,46 @@ const ReportStudent = ({navigation, route}) => {
   return (
     <View
       style={{
-        flex: 1,
-        flexDirection: 'column',
+        height: '100%',
         backgroundColor: '#121212',
         elevation: 0,
       }}>
-      <View style={{flexDirection: 'row', padding: 5}}>
-        <SmallBox text={record.length} />
+      <View
+        style={{flex: 0, flexDirection: 'row', marginLeft: 10, marginTop: 11}}>
+        <View
+          style={{
+            flexDirection: 'column',
+            padding: 10,
+            backgroundColor: '#191919',
+            borderRadius: 8,
+            elevation: 1,
+            alignItems: 'center',
+          }}>
+          <Text style={{opacity: 0.6, fontSize: 17}}>Student Count</Text>
+          <Text style={{paddingTop: 2, fontSize: 24}}>{record.length}</Text>
+        </View>
+        <View
+          style={{
+            flexGrow: 1,
+            marginHorizontal: 10,
+            flexDirection: 'column',
+            padding: 10,
+            backgroundColor: '#191919',
+            borderRadius: 8,
+            elevation: 1,
+            alignItems: 'center',
+          }}>
+          <Text style={{opacity: 0.6, fontSize: 17}}>Today Date</Text>
+          <Text style={{paddingTop: 2, fontSize: 24}}>
+            {moment().format('dddd ll')}
+          </Text>
+        </View>
       </View>
-      <MyList data={record} rendererItem={renderItem} />
+      <MyList
+        data={record}
+        rendererItem={renderItem}
+        style={{paddingTop: 10}}
+      />
       <Button
         type="clear"
         containerStyle={{

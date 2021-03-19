@@ -1,5 +1,9 @@
-import React from 'react';
 import AsyncStorage from '@react-native-community/async-storage';
+
+const testname = (name) => {
+  let validator = /^\d+$/;
+  return validator.test(name) || name === '' ? false : true;
+};
 
 const models = [
   {
@@ -104,4 +108,12 @@ const ReadData = async (callback, set) => {
     console.error(`Error during write: ${e}`);
   }
 };
-export {StringGenerator, WriteData, ReadData, ValidateName, models, progress};
+export {
+  StringGenerator,
+  WriteData,
+  ReadData,
+  ValidateName,
+  models,
+  progress,
+  testname,
+};
