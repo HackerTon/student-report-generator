@@ -109,22 +109,15 @@ const MyForm = ({navigation}) => {
     // model selection
     case 1:
       return (
-        <>
-          <View style={{flex: 1, backgroundColor: 'black'}}>
-            <MySectionList
-              data={models}
-              selection={({title, item}) => {
-                dispatch({type: 'setmodellevel', model: item, level: title});
-              }}
-            />
-            <View
-              style={{
-                flexDirection: 'column',
-                alignItems: 'flex-end',
-                padding: 5,
-              }}></View>
-          </View>
-        </>
+        <View style={{height: '100%'}}>
+          <MySectionList
+            data={models}
+            selection={({title, item}) => {
+              dispatch({type: 'setmodellevel', model: item, level: title});
+            }}
+            style={{backgroundColor: '#121212'}}
+          />
+        </View>
       );
     case 2:
       return (

@@ -3,27 +3,50 @@ import firestore from '@react-native-firebase/firestore';
 import React, {useEffect, useState} from 'react';
 import {Alert, View} from 'react-native';
 import {Button, Icon, Text} from 'react-native-elements';
-import {FlatList, TextInput} from 'react-native-gesture-handler';
+import {
+  FlatList,
+  State,
+  TapGestureHandler,
+  TextInput,
+} from 'react-native-gesture-handler';
 import {testname} from '../../Helper';
 
 const renderItem = ({item}) => {
   return (
-    <View
-      style={{
-        marginHorizontal: 10,
-        marginVertical: 5,
-        padding: 10,
-        backgroundColor: '#191919',
-        borderRadius: 8,
-        elevation: 1,
+    <TapGestureHandler
+      onHandlerStateChange={(event) => {
+        if (event.nativeEvent.state === State.ACTIVE) {
+          Alert.alert(
+            'Discard student ' + item.name,
+            'Do you still want to discard?',
+            [
+              {text: 'Cancel', style: 'cancel', onPress: () => {}},
+              {
+                text: 'Discard',
+                style: 'destructive',
+                onPress: () => RemoveStudent(item.id),
+              },
+            ],
+          );
+        }
       }}>
-      <Text
+      <View
         style={{
-          fontSize: 17,
+          marginHorizontal: 10,
+          marginVertical: 5,
+          padding: 10,
+          backgroundColor: '#191919',
+          borderRadius: 8,
+          elevation: 1,
         }}>
-        {item.name}
-      </Text>
-    </View>
+        <Text
+          style={{
+            fontSize: 17,
+          }}>
+          {item.name}
+        </Text>
+      </View>
+    </TapGestureHandler>
   );
 };
 

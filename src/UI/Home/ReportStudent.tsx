@@ -128,8 +128,28 @@ const ReportStudent = ({navigation, route}) => {
         backgroundColor: '#121212',
         elevation: 0,
       }}>
+      <View style={{marginTop: 10, marginHorizontal: 10}}>
+        <View
+          style={{
+            flexDirection: 'column',
+            padding: 5,
+            backgroundColor: '#191919',
+            borderRadius: 8,
+            elevation: 1,
+            alignItems: 'center',
+          }}>
+          <Text style={{paddingTop: 2, fontSize: 24}}>
+            {moment().format('dddd')}
+          </Text>
+        </View>
+      </View>
       <View
-        style={{flex: 0, flexDirection: 'row', marginLeft: 10, marginTop: 11}}>
+        style={{
+          flex: 0,
+          flexDirection: 'row',
+          marginHorizontal: 10,
+          marginTop: 11,
+        }}>
         <View
           style={{
             flexDirection: 'column',
@@ -145,7 +165,7 @@ const ReportStudent = ({navigation, route}) => {
         <View
           style={{
             flexGrow: 1,
-            marginHorizontal: 10,
+            marginLeft: 10,
             flexDirection: 'column',
             padding: 10,
             backgroundColor: '#191919',
@@ -155,10 +175,11 @@ const ReportStudent = ({navigation, route}) => {
           }}>
           <Text style={{opacity: 0.6, fontSize: 17}}>Today Date</Text>
           <Text style={{paddingTop: 2, fontSize: 24}}>
-            {moment().format('dddd ll')}
+            {moment().format('ll')}
           </Text>
         </View>
       </View>
+
       <MyList
         data={record}
         rendererItem={renderItem}
