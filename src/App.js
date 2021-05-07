@@ -1,14 +1,11 @@
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
-import React, {useState} from 'react';
-import {StatusBar, View, Text} from 'react-native';
-import {Button, ThemeProvider} from 'react-native-elements';
-import GeneratorPage from './UI/GeneratorPage';
+import React from 'react';
+import {StatusBar} from 'react-native';
+import {ThemeProvider} from 'react-native-elements';
 import Form from './UI/Home/Form';
 import HomeNavigator from './UI/Home/Home';
 import ReportStudent from './UI/Home/ReportStudent';
-import tailwind from 'tailwind-rn';
-import {SafeAreaView} from 'react-native-safe-area-context';
 
 const Stack = createStackNavigator();
 
@@ -36,17 +33,6 @@ const App = () => {
       </NavigationContainer>
     </ThemeProvider>
   );
-
-  // if (page === 'main') {
-  //   return (
-  //     <View>
-  //       <Button title="first" onPress={() => setPage('first')} />
-  //       <Button title="second" onPress={() => setPage('second')} />
-  //     </View>
-  //   );
-  // } else if (page === 'first') {
-
-  // }
 };
 
 export default App;

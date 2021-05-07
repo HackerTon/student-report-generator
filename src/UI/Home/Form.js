@@ -56,12 +56,12 @@ const MyForm = ({navigation}) => {
     return (
       <TouchableOpacity
         style={{
+          paddingVertical: 15,
+          paddingLeft: 20,
           marginHorizontal: 10,
           marginVertical: 5,
-          padding: 10,
           backgroundColor: '#191919',
-          borderRadius: 8,
-          elevation: 1,
+          borderRadius: 4,
         }}
         onPress={() => dispatch({type: 'setname', name: item.name})}>
         <Text
@@ -85,8 +85,14 @@ const MyForm = ({navigation}) => {
     // student selection
     case 0:
       return (
-        <View style={{height: '100%', backgroundColor: '#121212'}}>
-          <View style={{marginTop: 10, marginHorizontal: 5}}>
+        <View style={{flex: 1, backgroundColor: '#121212'}}>
+          {/* name search bar */}
+          <View
+            style={{
+              flex: 1,
+              justifyContent: 'center',
+              marginHorizontal: 5,
+            }}>
             <TextInput
               placeholder={'Name'}
               value={state.query}
@@ -101,7 +107,8 @@ const MyForm = ({navigation}) => {
               }}
             />
           </View>
-          <View style={{paddingVertical: 20}}>
+          {/* flatlist for student name */}
+          <View style={{flex: 9}}>
             <MyList data={data} rendererItem={renderItem} />
           </View>
         </View>
@@ -109,16 +116,18 @@ const MyForm = ({navigation}) => {
     // model selection
     case 1:
       return (
-        <View style={{height: '100%'}}>
-          <MySectionList
-            data={models}
-            selection={({title, item}) => {
-              dispatch({type: 'setmodellevel', model: item, level: title});
-            }}
-            style={{backgroundColor: '#121212'}}
-          />
+        <View style={{flex: 1, backgroundColor: '#121212'}}>
+          <View style={{flex: 1, marginBottom: 10}}>
+            <MySectionList
+              data={models}
+              selection={({title, item}) => {
+                dispatch({type: 'setmodellevel', model: item, level: title});
+              }}
+            />
+          </View>
         </View>
       );
+    // progress
     case 2:
       return (
         <View style={{flex: 1, backgroundColor: 'black'}}>

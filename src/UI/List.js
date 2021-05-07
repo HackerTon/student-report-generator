@@ -1,6 +1,8 @@
 import React, {useState} from 'react';
 import {FlatList, SectionList} from 'react-native';
+import {Button, Icon, Text} from 'react-native-elements';
 import {ListItem} from 'react-native-elements';
+import {TextInput, TouchableOpacity} from 'react-native-gesture-handler';
 
 const MyList = ({data, style, selection, rendererItem}) => {
   const [selectedId, setSelectedId] = useState(null);
@@ -37,26 +39,31 @@ const MyList = ({data, style, selection, rendererItem}) => {
 };
 
 const MySectionList = ({data, style, selection, rendererItem}) => {
-  const Selector = selection ? selection : () => {};
-
   const keyExtractor = (item, index) => item + index;
+
   const renderItem = rendererItem
     ? rendererItem
     : ({item, index, section}) => {
         const {title} = section;
 
         return (
-          <ListItem
-            topDivider
-            bottomDivider
-            onPress={() => {
-              selection({title, item, index});
+          <TouchableOpacity
+            style={{
+              paddingVertical: 15,
+              paddingLeft: 20,
+              marginHorizontal: 10,
+              marginVertical: 5,
+              backgroundColor: '#191919',
+              borderRadius: 4,
             }}
-            containerStyle={{backgroundColor: 'black'}}>
-            <ListItem.Content>
-              <ListItem.Title>{`${index + 1}. ${item}`}</ListItem.Title>
-            </ListItem.Content>
-          </ListItem>
+            onPress={() => selection({title, item, index})}>
+            <Text
+              style={{
+                fontSize: 17,
+              }}>
+              {`${index + 1}. ${item}`}
+            </Text>
+          </TouchableOpacity>
         );
       };
 
@@ -69,7 +76,7 @@ const MySectionList = ({data, style, selection, rendererItem}) => {
         return (
           <ListItem
             containerStyle={{
-              backgroundColor: 'black',
+              backgroundColor: '#121212',
               flex: 1,
               flexDirection: 'column',
               alignItems: 'center',

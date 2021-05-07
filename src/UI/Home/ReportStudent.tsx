@@ -5,15 +5,38 @@ import {Alert, Clipboard, View} from 'react-native';
 import {Button, Icon, Text} from 'react-native-elements';
 import {MyList} from '../List';
 
-type Props = {
-  text: string;
-};
-
 type Record = {
   name: string;
   level: string;
   model: string;
   progress: string;
+};
+
+const renderItem = ({item, index}) => {
+  return (
+    <View
+      style={{
+        flex: 1,
+        paddingVertical: 15,
+        paddingLeft: 20,
+        marginHorizontal: 10,
+        marginVertical: 5,
+        backgroundColor: '#191919',
+        borderRadius: 4,
+        elevation: 1,
+      }}>
+      <Text
+        style={{
+          fontSize: 17,
+          opacity: 0.6,
+        }}>
+        {index}. {item.name}
+      </Text>
+      <Text>
+        {item.level} {item.model} {item.progress}
+      </Text>
+    </View>
+  );
 };
 
 const ReportStudent = ({navigation, route}) => {
@@ -30,6 +53,7 @@ const ReportStudent = ({navigation, route}) => {
       };
 
       setRecord([...record, cur]);
+      console.log(record);
     }
   }, [params]);
 
@@ -39,9 +63,7 @@ const ReportStudent = ({navigation, route}) => {
         if (record.length < 1) {
           return;
         }
-
         e.preventDefault();
-
         Alert.alert(
           'Discard changes?',
           'You have unsaved changes. Do you still want to discard?',
@@ -57,33 +79,6 @@ const ReportStudent = ({navigation, route}) => {
       }),
     [record],
   );
-
-  const renderItem = ({item, index}) => {
-    return (
-      <View
-        style={{
-          flex: 1,
-          paddingVertical: 10,
-          paddingLeft: 20,
-          marginHorizontal: 10,
-          marginVertical: 5,
-          backgroundColor: '#191919',
-          borderRadius: 4,
-          elevation: 1,
-        }}>
-        <Text
-          style={{
-            fontSize: 17,
-            opacity: 0.6,
-          }}>
-          {index}. {item.name}
-        </Text>
-        <Text>
-          {item.level} {item.model} {item.progress}
-        </Text>
-      </View>
-    );
-  };
 
   const Generate = (record: Record[]) => {
     let text = '';
@@ -122,110 +117,95 @@ const ReportStudent = ({navigation, route}) => {
   };
 
   return (
-    <View
-      style={{
-        height: '100%',
-        backgroundColor: '#121212',
-        elevation: 0,
-      }}>
-      <View style={{marginTop: 10, marginHorizontal: 10}}>
-        <View
-          style={{
-            flexDirection: 'column',
-            padding: 5,
-            backgroundColor: '#191919',
-            borderRadius: 8,
-            elevation: 1,
-            alignItems: 'center',
-          }}>
-          <Text style={{paddingTop: 2, fontSize: 24}}>
-            {moment().format('dddd')}
-          </Text>
-        </View>
-      </View>
-      <View
-        style={{
-          flex: 0,
-          flexDirection: 'row',
-          marginHorizontal: 10,
-          marginTop: 11,
-        }}>
-        <View
-          style={{
-            flexDirection: 'column',
-            padding: 10,
-            backgroundColor: '#191919',
-            borderRadius: 8,
-            elevation: 1,
-            alignItems: 'center',
-          }}>
-          <Text style={{opacity: 0.6, fontSize: 17}}>Student Count</Text>
-          <Text style={{paddingTop: 2, fontSize: 24}}>{record.length}</Text>
-        </View>
-        <View
-          style={{
-            flexGrow: 1,
-            marginLeft: 10,
-            flexDirection: 'column',
-            padding: 10,
-            backgroundColor: '#191919',
-            borderRadius: 8,
-            elevation: 1,
-            alignItems: 'center',
-          }}>
-          <Text style={{opacity: 0.6, fontSize: 17}}>Today Date</Text>
-          <Text style={{paddingTop: 2, fontSize: 24}}>
-            {moment().format('ll')}
-          </Text>
-        </View>
-      </View>
+    <View style={{backgroundColor: '#121212'}}>
+      {/* header */}
+      <View style={{height: '13%'}}>
+        <View style={{flex: 1}}>
+          {/* todays day */}
+          <View style={{alignSelf: 'center'}}>
+            <Text style={{paddingTop: 2, fontSize: 24}}>
+              {moment().format('dddd')}
+            </Text>
+          </View>
+          {/* student count and date */}
+          <View
+            style={{
+              flex: 1,
+              flexDirection: 'row',
+              justifyContent: 'space-around',
+            }}>
+            {/* student count */}
+            <View style={{}}>
+              <Text style={{opacity: 0.6, fontSize: 17, textAlign: 'center'}}>
+                Student Count
+              </Text>
+              <Text style={{fontSize: 24, textAlign: 'center'}}>
+                {record.length}
+              </Text>
+            </View>
 
-      <MyList
-        data={record}
-        rendererItem={renderItem}
-        style={{paddingTop: 10}}
-      />
-      <Button
-        type="clear"
-        containerStyle={{
-          position: 'absolute',
-          right: 10,
-          bottom: 5,
-        }}
-        icon={
-          <Icon name="delete" size={40} color="white" style={{opacity: 0.87}} />
-        }
-        onPress={() => Delete(record)}
-      />
-      <Button
-        type="clear"
-        containerStyle={{
-          position: 'absolute',
-          right: 165,
-          bottom: 5,
-        }}
-        icon={
-          <Icon name="done" size={40} color="white" style={{opacity: 0.87}} />
-        }
-        onPress={() => Generate(record)}
-      />
-      <Button
-        type="clear"
-        containerStyle={{
-          position: 'absolute',
-          left: 10,
-          bottom: 5,
-        }}
-        icon={
-          <Icon
-            name="note-add"
-            size={40}
-            color="white"
-            style={{opacity: 0.87}}
+            {/* today date */}
+            <View style={{}}>
+              <Text style={{opacity: 0.6, fontSize: 17, textAlign: 'center'}}>
+                Today Date
+              </Text>
+              <Text style={{fontSize: 24, textAlign: 'center'}}>
+                {moment().format('ll')}
+              </Text>
+            </View>
+          </View>
+        </View>
+      </View>
+      {/* flatlist */}
+      <View style={{height: '79%', paddingVertical: 10}}>
+        <MyList data={record} rendererItem={renderItem} />
+      </View>
+      {/* bottom button */}
+      <View style={{height: '8%'}}>
+        <View
+          style={{
+            flex: 1,
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+          }}>
+          <Button
+            type="clear"
+            icon={
+              <Icon
+                name="delete"
+                size={40}
+                color="white"
+                style={{opacity: 0.87}}
+              />
+            }
+            onPress={() => Delete(record)}
           />
-        }
-        onPress={() => navigation.navigate('Form')}
-      />
+          <Button
+            type="clear"
+            icon={
+              <Icon
+                name="done"
+                size={40}
+                color="white"
+                style={{opacity: 0.87}}
+              />
+            }
+            onPress={() => Generate(record)}
+          />
+          <Button
+            type="clear"
+            icon={
+              <Icon
+                name="note-add"
+                size={40}
+                color="white"
+                style={{opacity: 0.87}}
+              />
+            }
+            onPress={() => navigation.navigate('Form')}
+          />
+        </View>
+      </View>
     </View>
   );
 };

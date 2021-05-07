@@ -72,7 +72,8 @@ const RenderItem = ({item}) => (
     <View
       style={{
         marginHorizontal: 15,
-        marginTop: 10,
+        marginTop: 20,
+        marginBottom: 20,
         backgroundColor: '#191919',
         borderRadius: 7,
         elevation: 1,
@@ -117,7 +118,6 @@ const HomeScreen = ({navigation}: Props) => {
         snapshot.forEach((document) => {
           history.push({...document.data(), id: document.id});
         });
-
         setHistory(history);
       });
   }, []);
