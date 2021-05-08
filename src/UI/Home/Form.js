@@ -42,9 +42,9 @@ const MyForm = ({navigation}) => {
       .collection('student')
       .orderBy('name', 'asc')
       .get()
-      .then((snapshot) => {
+      .then(snapshot => {
         let student = [];
-        snapshot.forEach((document) => {
+        snapshot.forEach(document => {
           student.push({...document.data(), id: document.id});
         });
 
@@ -74,10 +74,41 @@ const MyForm = ({navigation}) => {
     );
   };
 
+  const renderItem2 = ({item}) => {
+    return (
+      <TouchableOpacity
+        style={{
+          paddingVertical: 15,
+          paddingLeft: 20,
+          marginHorizontal: 10,
+          marginVertical: 5,
+          backgroundColor: '#191919',
+          borderRadius: 4,
+        }}
+        onPress={() => {
+          const {name, level, model} = state;
+
+          navigation.navigate('Report', {
+            name,
+            level,
+            model,
+            progress: item,
+          });
+        }}>
+        <Text
+          style={{
+            fontSize: 17,
+          }}>
+          {item}
+        </Text>
+      </TouchableOpacity>
+    );
+  };
+
   let data =
     state.query === ''
       ? state.student
-      : state.student.filter((value) =>
+      : state.student.filter(value =>
           value.name.search(new RegExp(`^${state.query}`, 'i')) ? false : true,
         );
 
@@ -97,7 +128,7 @@ const MyForm = ({navigation}) => {
               placeholder={'Name'}
               value={state.query}
               placeholderTextColor="white"
-              onChangeText={(text) => dispatch({type: 'setquery', query: text})}
+              onChangeText={text => dispatch({type: 'setquery', query: text})}
               style={{
                 fontSize: 20,
                 color: 'white',
@@ -130,20 +161,8 @@ const MyForm = ({navigation}) => {
     // progress
     case 2:
       return (
-        <View style={{flex: 1, backgroundColor: 'black'}}>
-          <MyList
-            data={progress}
-            selection={({item}) => {
-              const {name, level, model} = state;
-
-              navigation.navigate('Report', {
-                name,
-                level,
-                model,
-                progress: item,
-              });
-            }}
-          />
+        <View style={{flex: 1, backgroundColor: '#121212', paddingTop: 10}}>
+          <MyList data={progress} rendererItem={renderItem2} />
         </View>
       );
   }

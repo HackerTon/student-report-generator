@@ -59,7 +59,7 @@ const ReportStudent = ({navigation, route}) => {
 
   useEffect(
     () =>
-      navigation.addListener('beforeRemove', (e) => {
+      navigation.addListener('beforeRemove', e => {
         if (record.length < 1) {
           return;
         }
