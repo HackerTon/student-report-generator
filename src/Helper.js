@@ -1,6 +1,4 @@
-import AsyncStorage from '@react-native-community/async-storage';
-
-const testname = (name) => {
+const testname = name => {
   let validator = /^\d+$/;
   return validator.test(name) || name === '' ? false : true;
 };
@@ -63,13 +61,13 @@ const models = [
 
 const progress = ['assembling', 'programming', 'done'];
 
-const ValidateName = (text) => {
+const ValidateName = text => {
   let validator = /^\d+$/;
 
   return !(validator.test(text) || text === '');
 };
 
-const StringGenerator = (array) => {
+const StringGenerator = array => {
   var text = '';
 
   array.forEach((value, index) => {

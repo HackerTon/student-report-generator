@@ -1,4 +1,4 @@
-import {Picker} from '@react-native-community/picker';
+import {Picker} from '@react-native-picker/picker';
 import firestore from '@react-native-firebase/firestore';
 import React, {useEffect, useState} from 'react';
 import {Alert, View} from 'react-native';
@@ -14,7 +14,7 @@ import {testname} from '../../Helper';
 const renderItem = ({item}) => {
   return (
     <TapGestureHandler
-      onHandlerStateChange={(event) => {
+      onHandlerStateChange={event => {
         if (event.nativeEvent.state === State.ACTIVE) {
           Alert.alert(
             'Discard student ' + item.name,
@@ -54,7 +54,7 @@ const InsertStudent = ({name, classday}) => {
   if (testname(name)) {
     const query = firestore().collection('student').where('name', '==', name);
 
-    query.get().then((snapshot) => {
+    query.get().then(snapshot => {
       const isEmpty = snapshot.empty;
       if (isEmpty) {
         firestore()
@@ -63,7 +63,7 @@ const InsertStudent = ({name, classday}) => {
           .then(() => {
             console.log('write student successful');
           })
-          .catch((err) => 'write student failure');
+          .catch(err => 'write student failure');
       } else {
         Alert.alert('Duplicate found', 'System found entry with same name');
       }
@@ -73,7 +73,7 @@ const InsertStudent = ({name, classday}) => {
   }
 };
 
-const RemoveStudent = (docid) => {
+const RemoveStudent = docid => {
   if (docid) {
     firestore().collection('student').doc(docid).delete();
   }
@@ -88,10 +88,10 @@ const RegistrationScreen = () => {
     const subscribe = firestore()
       .collection('student')
       .orderBy('name', 'asc')
-      .onSnapshot((query) => {
+      .onSnapshot(query => {
         const students = [];
 
-        query.forEach((document) => {
+        query.forEach(document => {
           students.push({...document.data(), id: document.id});
         });
 
@@ -117,7 +117,7 @@ const RegistrationScreen = () => {
           placeholderTextColor="white"
           value={name}
           onTouchStart={() => setName('')}
-          onChangeText={(text) => setName(text)}
+          onChangeText={text => setName(text)}
           style={{
             fontSize: 20,
             color: 'white',
@@ -129,10 +129,10 @@ const RegistrationScreen = () => {
       </View>
       <View style={{paddingLeft: 5}}>
         <Picker
+          prompt="Day"
           style={{color: 'white'}}
           selectedValue={classday}
-          onValueChange={(value) => setClassday(value)}
-          prompt="Day">
+          onValueChange={value => setClassday(value)}>
           <Picker.Item label="wednesday" value="wed" />
           <Picker.Item label="friday" value="fri" />
           <Picker.Item label="saturday" value="sat" />
