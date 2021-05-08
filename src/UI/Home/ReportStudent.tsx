@@ -1,8 +1,9 @@
 import firestore from '@react-native-firebase/firestore';
 import moment from 'moment';
 import React, {useEffect, useState} from 'react';
-import {Alert, Clipboard, View} from 'react-native';
+import {Alert, View} from 'react-native';
 import {Button, Icon, Text} from 'react-native-elements';
+import Clipboard from '@react-native-community/clipboard';
 import {MyList} from '../List';
 
 type Record = {
@@ -53,7 +54,6 @@ const ReportStudent = ({navigation, route}) => {
       };
 
       setRecord([...record, cur]);
-      console.log(record);
     }
   }, [params]);
 
@@ -80,35 +80,44 @@ const ReportStudent = ({navigation, route}) => {
     [record],
   );
 
+  // generate string form for clipboar
+  // while saving history to firestore
   const Generate = (record: Record[]) => {
     let text = '';
 
-    if (record.length < 1) {
-      return;
-    }
+    if (record.length > 1) {
+      // concatenate details of each student
+      // into string
+      record.forEach(({name, level, model, progress}, index) => {
+        text = text.concat(
+          `${index + 1}. ${name} ${level} ${model} ${progress}\n\n`,
+        );
+      });
 
-    record.forEach(({name, level, model, progress}, index) => {
-      text = text.concat(
-        `${index + 1}. ${name} ${level} ${model} ${progress}\n\n`,
-      );
-    });
+      // write the string to firestore
+      firestore()
+        .collection('history')
+        .add({timecode: firestore.FieldValue.serverTimestamp(), txt: text})
+        .catch(() => Alert.alert('Warning', 'Write failure.'));
 
-    firestore()
-      .collection('history')
-      .add({timecode: firestore.FieldValue.serverTimestamp(), txt: text})
-      .catch(() => Alert.alert('Warning', 'Write failure.'));
+      // concatenate date
+      text = `${moment().format('dddd l')}\n` + text;
 
-    text = `${moment().format('dddd l')}\n` + text;
-    Clipboard.setString(text);
-    Alert.alert('Information', 'Copied generated text.', [
-      {
-        text: 'OK',
-        style: 'default',
-        onPress: () => {
-          navigation.navigate('Home');
+      // copy the string to clipboard
+      Clipboard.setString(text);
+
+      // alert user that text is copy
+      // go back to home page
+      Alert.alert('Information', 'Copied generated text.', [
+        {
+          text: 'OK',
+          style: 'default',
+          onPress: () => {
+            navigation.navigate('Home');
+          },
         },
-      },
-    ]);
+      ]);
+    }
   };
 
   const Delete = (mutable: Record[]) => {
@@ -119,10 +128,13 @@ const ReportStudent = ({navigation, route}) => {
   return (
     <View style={{backgroundColor: '#121212'}}>
       {/* header */}
-      <View style={{height: '13%'}}>
+      <View style={{height: '13%', paddingTop: 5}}>
         <View style={{flex: 1}}>
           {/* todays day */}
-          <View style={{alignSelf: 'center'}}>
+          <View
+            style={{
+              alignSelf: 'center',
+            }}>
             <Text style={{paddingTop: 2, fontSize: 24}}>
               {moment().format('dddd')}
             </Text>
