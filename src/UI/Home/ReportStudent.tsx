@@ -1,19 +1,13 @@
+import Clipboard from '@react-native-community/clipboard';
 import firestore from '@react-native-firebase/firestore';
 import moment from 'moment';
 import React, {useEffect, useState} from 'react';
 import {Alert, View} from 'react-native';
 import {Button, Icon, Text} from 'react-native-elements';
-import Clipboard from '@react-native-community/clipboard';
+import {Detail, Record} from '../../Types';
 import {MyList} from '../List';
 
-type Record = {
-  name: string;
-  level: string;
-  model: string;
-  progress: string;
-};
-
-const renderItem = ({item, index}) => {
+const renderItem = ({item, index}: {item: Record; index: number}) => {
   return (
     <View
       style={{
@@ -40,26 +34,19 @@ const renderItem = ({item, index}) => {
   );
 };
 
-const ReportStudent = ({navigation, route}) => {
-  const {params} = route;
-  const [record, setRecord] = useState([]);
+const ReportStudent = ({navigation, route}: {navigation: any; route: any}) => {
+  const {params}: {params: Detail} = route;
+  const [record, setRecord] = useState<Detail[]>([]);
 
   useEffect(() => {
     if (params != null) {
-      let cur: Record = {
-        name: params.name,
-        level: params.level,
-        model: params.model,
-        progress: params.progress,
-      };
-
-      setRecord([...record, cur]);
+      setRecord([...record, params]);
     }
   }, [params]);
 
   useEffect(
     () =>
-      navigation.addListener('beforeRemove', e => {
+      navigation.addListener('beforeRemove', (e: any) => {
         if (record.length < 1) {
           return;
         }
@@ -80,49 +67,70 @@ const ReportStudent = ({navigation, route}) => {
     [record],
   );
 
-  // generate string form for clipboar
+  // generate string form for clipboard
   // while saving history to firestore
-  const Generate = (record: Record[]) => {
+  const Generate = () => {
     let text = '';
 
     if (record.length > 1) {
-      // concatenate details of each student
-      // into string
-      record.forEach(({name, level, model, progress}, index) => {
-        text = text.concat(
-          `${index + 1}. ${name} ${level} ${model} ${progress}\n\n`,
-        );
-      });
-
-      // write the string to firestore
       firestore()
-        .collection('history')
-        .add({timecode: firestore.FieldValue.serverTimestamp(), txt: text})
-        .catch(() => Alert.alert('Warning', 'Write failure.'));
+        .runTransaction(async transaction => {
+          const historyRef = firestore().collection('history').doc();
 
-      // concatenate date
-      text = `${moment().format('dddd l')}\n` + text;
+          // set history first
+          transaction.set(historyRef, {
+            timecode: firestore.FieldValue.serverTimestamp(),
+            record,
+          });
 
-      // copy the string to clipboard
-      Clipboard.setString(text);
+          // update progress on each student
+          record.forEach(value => {
+            const {id, index, progress} = value;
 
-      // alert user that text is copy
-      // go back to home page
-      Alert.alert('Information', 'Copied generated text.', [
-        {
-          text: 'OK',
-          style: 'default',
-          onPress: () => {
-            navigation.navigate('Home');
-          },
-        },
-      ]);
+            const studentRef = firestore()
+              .collection('student')
+              .doc(id + '');
+
+            transaction.update(studentRef, {index, progress});
+          });
+        })
+        .then(value => {
+          // concatenate details of each student
+          // into string
+          record.forEach((data, index) => {
+            const {studentName, modelName, level, progress} = data;
+
+            text = text.concat(
+              `${
+                index + 1
+              }. ${studentName} ${level} ${modelName} ${progress}\n\n`,
+            );
+          });
+
+          // concatenate date
+          text = `${moment().format('dddd l')}\n` + text;
+
+          // copy the string to clipboard
+          Clipboard.setString(text);
+
+          // alert user that text is copy
+          // go back to home page
+          Alert.alert('Information', 'Copied generated text.', [
+            {
+              text: 'OK',
+              style: 'default',
+              onPress: () => {
+                navigation.navigate('Home');
+              },
+            },
+          ]);
+        });
     }
   };
 
-  const Delete = (mutable: Record[]) => {
-    mutable.pop();
-    setRecord([...mutable]);
+  const Delete = () => {
+    record.pop();
+    setRecord([...record]);
   };
 
   return (
@@ -190,7 +198,7 @@ const ReportStudent = ({navigation, route}) => {
                 style={{opacity: 0.87}}
               />
             }
-            onPress={() => Delete(record)}
+            onPress={() => Delete()}
           />
           <Button
             type="clear"
@@ -202,7 +210,7 @@ const ReportStudent = ({navigation, route}) => {
                 style={{opacity: 0.87}}
               />
             }
-            onPress={() => Generate(record)}
+            onPress={() => Generate()}
           />
           <Button
             type="clear"

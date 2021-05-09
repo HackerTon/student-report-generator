@@ -5,7 +5,7 @@ const testname = name => {
 
 const models = [
   {
-    title: 'level 1',
+    title: 1,
     data: [
       'Squirrel',
       'Windmill',
@@ -23,7 +23,7 @@ const models = [
     ],
   },
   {
-    title: 'level 2',
+    title: 2,
     data: [
       'Elephant',
       'Flower & Firefly',
@@ -40,7 +40,7 @@ const models = [
     ],
   },
   {
-    title: 'level 3',
+    title: 3,
     data: [
       'Security Robot',
       'Sound Detecting Robot',

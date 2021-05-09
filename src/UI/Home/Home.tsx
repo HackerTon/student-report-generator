@@ -2,7 +2,6 @@ import firestore from '@react-native-firebase/firestore';
 import {
   BottomTabBarOptions,
   BottomTabNavigationOptions,
-  BottomTabNavigationProp,
   createBottomTabNavigator,
 } from '@react-navigation/bottom-tabs';
 import moment from 'moment';
@@ -10,28 +9,9 @@ import React, {useEffect, useState} from 'react';
 import {Alert, View} from 'react-native';
 import {Button, Icon, Text} from 'react-native-elements';
 import {State, TapGestureHandler} from 'react-native-gesture-handler';
+import {Props, Record} from '../../Types';
 import {MyList} from '../List';
 import RegistrationScreen from '../Regis/Registration';
-
-type RootTabParamList = {
-  Home: undefined;
-  Report: undefined;
-};
-
-type TabScreenNavProp = BottomTabNavigationProp<RootTabParamList, 'Home'>;
-
-type Props = {
-  route: undefined;
-  navigation: TabScreenNavProp;
-};
-
-const tabBarOptions: BottomTabBarOptions = {
-  style: {
-    backgroundColor: '#191919',
-    borderTopWidth: 1,
-    borderTopColor: 'grey',
-  },
-};
 
 const homeOptions: BottomTabNavigationOptions = {
   tabBarIcon: ({focused}) => {
@@ -55,7 +35,15 @@ const regisOptions: BottomTabNavigationOptions = {
   },
 };
 
-const RenderItem = ({item}) => (
+const tabBarOptions: BottomTabBarOptions = {
+  style: {
+    backgroundColor: '#191919',
+    borderTopWidth: 1,
+    borderTopColor: 'grey',
+  },
+};
+
+const RenderItem = ({item}: {item: Record}) => (
   <TapGestureHandler
     onHandlerStateChange={({nativeEvent}) => {
       if (nativeEvent.state === State.ACTIVE) {
@@ -78,7 +66,7 @@ const RenderItem = ({item}) => (
         borderRadius: 7,
         elevation: 1,
       }}>
-      <View style={{paddingLeft: 15, paddingTop: 5}}>
+      <View style={{paddingHorizontal: 15, paddingTop: 5}}>
         <Text
           style={{
             fontSize: 32,
@@ -88,17 +76,26 @@ const RenderItem = ({item}) => (
           {moment(item.timecode).format('dddd ll')}
         </Text>
       </View>
-      <View style={{paddingLeft: 15, paddingTop: 5}}>
-        <Text style={{opacity: 0.75}}>{item.txt}</Text>
+      <View style={{paddingHorizontal: 15, paddingTop: 5}}>
+        <Text>
+          {item.data.map(value => {
+            return (
+              <Text key={'' + value.id}>
+                {value.studentName} {value.level} {value.modelName}
+                {value.progress}
+              </Text>
+            );
+          })}
+        </Text>
       </View>
     </View>
   </TapGestureHandler>
 );
 
-const WriteHistory = (item) => {
+const WriteHistory = (item: Record) => {
   firestore()
     .collection('history')
-    .doc(item.id)
+    .doc(item.id + '')
     .delete()
     .catch(() => Alert.alert('Warning', 'Write failure.'));
 };
@@ -106,19 +103,23 @@ const WriteHistory = (item) => {
 const Tab = createBottomTabNavigator();
 
 const HomeScreen = ({navigation}: Props) => {
-  const [history, setHistory] = useState([]);
+  const [history, setHistory] = useState<Record[]>([]);
 
   // first time initialized array
   useEffect(() => {
-    firestore()
+    return firestore()
       .collection('history')
       .orderBy('timecode', 'desc')
-      .onSnapshot((snapshot) => {
-        let history: any[] = [];
-        snapshot.forEach((document) => {
-          history.push({...document.data(), id: document.id});
-        });
-        setHistory(history);
+      .onSnapshot(snapshot => {
+        let history: Record[] = [];
+        snapshot.forEach(doc =>
+          history.push({
+            id: doc.id,
+            timecode: doc.data().timecode,
+            data: doc.data().record,
+          }),
+        );
+        setHistory([...history]);
       });
   }, []);
 

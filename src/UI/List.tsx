@@ -1,49 +1,33 @@
 import React, {useState} from 'react';
-import {FlatList, SectionList} from 'react-native';
+import {FlatList, SectionList, StyleProp, ViewStyle} from 'react-native';
 import {ListItem, Text} from 'react-native-elements';
 import {TouchableOpacity} from 'react-native-gesture-handler';
+import {mylistProp} from '../Types';
 
-const MyList = ({data, style, selection, rendererItem}) => {
+const MyList = ({data, style, selection, rendererItem}: mylistProp) => {
   const [selectedId, setSelectedId] = useState(null);
 
   const keyExtractor = (_, index) => index.toString();
-  const renderItem = rendererItem
-    ? rendererItem
-    : ({item, index}) => {
-        const selector = selection ? selection : () => {};
-
-        return (
-          <ListItem
-            onPress={() => {
-              setSelectedId(index);
-              selector({item, index});
-            }}
-            containerStyle={{backgroundColor: '#191919'}}>
-            <ListItem.Content>
-              <ListItem.Title>{item}</ListItem.Title>
-            </ListItem.Content>
-          </ListItem>
-        );
-      };
 
   return (
     <FlatList
       data={data}
       extraData={selectedId}
       keyExtractor={keyExtractor}
-      renderItem={renderItem}
+      renderItem={rendererItem}
       style={style}
     />
   );
 };
 
-const MySectionList = ({data, style, selection, rendererItem}) => {
+const MySectionList = ({data, style, selection, rendererItem}: mylistProp) => {
   const keyExtractor = (item, index) => item + index;
 
+  // remove this list renderer item
   const renderItem = rendererItem
     ? rendererItem
     : ({item, index, section}) => {
-        const {title} = section;
+        const {level} = section;
 
         return (
           <TouchableOpacity
@@ -55,12 +39,14 @@ const MySectionList = ({data, style, selection, rendererItem}) => {
               backgroundColor: '#191919',
               borderRadius: 4,
             }}
-            onPress={() => selection({title, item, index})}>
+            onPress={() => {
+              selection(item);
+            }}>
             <Text
               style={{
                 fontSize: 17,
               }}>
-              {`${index + 1}. ${item}`}
+              {`${parseInt(index) + 1}. ${item.name}`}
             </Text>
           </TouchableOpacity>
         );
