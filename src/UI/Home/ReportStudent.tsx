@@ -1,12 +1,11 @@
 import Clipboard from '@react-native-community/clipboard';
 import firestore from '@react-native-firebase/firestore';
-import lodash from 'lodash';
 import moment from 'moment';
 import React, {useEffect, useState} from 'react';
 import {Alert, View} from 'react-native';
 import {Button, Icon, Text} from 'react-native-elements';
+import {FlatList} from 'react-native-gesture-handler';
 import {Detail} from '../../Helper/Types';
-import {MyList} from '../List';
 
 const renderItem = ({item, index}: {item: Detail; index: number}) => {
   return (
@@ -202,7 +201,11 @@ const ReportStudent = ({navigation, route}: {navigation: any; route: any}) => {
       </View>
       {/* flatlist */}
       <View style={{height: '79%', paddingVertical: 10}}>
-        <MyList data={record} rendererItem={renderItem} />
+        <FlatList
+          data={record}
+          keyExtractor={item => item.id}
+          renderItem={renderItem}
+        />
       </View>
       {/* bottom button */}
       <View style={{height: '8%'}}>

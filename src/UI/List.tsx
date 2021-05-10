@@ -7,8 +7,6 @@ import {mylistProp} from '../Helper/Types';
 const MyList = ({data, style, selection, rendererItem}: mylistProp) => {
   const [selectedId, setSelectedId] = useState(null);
 
-  const keyExtractor = (_, index) => index.toString();
-
   return (
     <FlatList
       data={data}

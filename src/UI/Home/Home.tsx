@@ -8,16 +8,14 @@ import moment from 'moment';
 import React, {useEffect, useState} from 'react';
 import {Alert, View} from 'react-native';
 import {Button, Icon, Text} from 'react-native-elements';
-import {TapGestureHandler} from 'react-native-gesture-handler';
+import {FlatList, TapGestureHandler} from 'react-native-gesture-handler';
 import {
   Menu,
   MenuOption,
   MenuOptions,
-  MenuProvider,
   MenuTrigger,
 } from 'react-native-popup-menu';
 import {Props, Record} from '../../Helper/Types';
-import {MyList} from '../List';
 import RegistrationScreen from '../Regis/Registration';
 
 const homeOptions: BottomTabNavigationOptions = {
@@ -86,48 +84,59 @@ const RenderItem = ({item}: {item: Record}) => (
         }}>
         <Text
           style={{
-            fontSize: 32,
+            fontSize: 30,
             fontWeight: 'bold',
             fontFamily: 'sans-serif-medium',
           }}>
           {moment(item.timecode).format('dddd ll')}
         </Text>
-        <Menu>
-          <MenuTrigger>
-            <Icon name="settings" type="Feather" size={20} color="white" />
-          </MenuTrigger>
-          <MenuOptions>
-            <MenuOption
-              onSelect={() => {
-                Alert.alert(
-                  'Discard this history?',
-                  'Do you still want to discard?',
-                  [
-                    {text: 'Cancel', style: 'cancel', onPress: () => {}},
-                    {
-                      text: 'Discard',
-                      style: 'destructive',
-                      onPress: () => WriteHistory(item),
-                    },
-                  ],
-                );
-              }}
-              text="Delete"
-            />
-          </MenuOptions>
-        </Menu>
+        {/* setting button */}
+        <View style={{flex: 1}}>
+          <Menu>
+            <MenuTrigger>
+              <Icon name="settings" type="Feather" size={20} color="white" />
+            </MenuTrigger>
+            <MenuOptions>
+              <MenuOption
+                customStyles={{
+                  optionText: {color: 'black', fontSize: 17},
+                  optionWrapper: {
+                    backgroundColor: 'white',
+                    padding: 10,
+                    elevation: 7,
+                  },
+                }}
+                onSelect={() => {
+                  Alert.alert(
+                    'Discard this history?',
+                    'Do you still want to discard?',
+                    [
+                      {text: 'Cancel', style: 'cancel', onPress: () => {}},
+                      {
+                        text: 'Discard',
+                        style: 'destructive',
+                        onPress: () => WriteHistory(item),
+                      },
+                    ],
+                  );
+                }}
+                text="Delete"
+              />
+            </MenuOptions>
+          </Menu>
+        </View>
       </View>
-      <View style={{paddingHorizontal: 15, paddingTop: 5}}>
-        <Text>
-          {item.data.map(value => {
-            return (
-              <Text key={'' + value.id}>
-                {value.studentName} {value.level} {value.modelName}
-                {value.progress}
+      <View style={{flex: 1, flexDirection: 'column'}}>
+        {item.data.map((value, index) => {
+          return (
+            <View>
+              <Text style={{fontSize: 16}} key={'' + value.id}>
+                {index + 1}. {value.studentName} Level {value.level}{' '}
+                {value.modelName} {value.progress}
               </Text>
-            );
-          })}
-        </Text>
+            </View>
+          );
+        })}
       </View>
     </View>
   </TapGestureHandler>
@@ -157,35 +166,35 @@ const HomeScreen = ({navigation}: Props) => {
   }, []);
 
   return (
-    <MenuProvider>
-      <View
-        style={{
-          flex: 1,
-          backgroundColor: '#121212',
-        }}>
-        <View style={{flex: 1}}>
-          <MyList
-            data={history}
-            rendererItem={RenderItem}
-            style={{paddingHorizontal: 15}}
-          />
-        </View>
-        <Button
-          type="clear"
-          containerStyle={{
-            backgroundColor: '#03DAC5',
-            position: 'absolute',
-            right: 15,
-            bottom: 15,
-            borderRadius: 100,
-          }}
-          icon={<Icon name="add" size={40} color="black" />}
-          onPress={() => {
-            navigation.navigate('Report');
-          }}
+    <View
+      style={{
+        flex: 1,
+        backgroundColor: '#121212',
+      }}>
+      <View style={{flex: 1}}>
+        <FlatList
+          data={history}
+          renderItem={RenderItem}
+          keyExtractor={item => item.id}
+          style={{paddingHorizontal: 15}}
+          ListFooterComponent={<View style={{height: 70}}></View>}
         />
       </View>
-    </MenuProvider>
+      <Button
+        type="clear"
+        containerStyle={{
+          backgroundColor: '#03DAC5',
+          position: 'absolute',
+          right: 15,
+          bottom: 15,
+          borderRadius: 100,
+        }}
+        icon={<Icon name="add" size={40} color="black" />}
+        onPress={() => {
+          navigation.navigate('Report');
+        }}
+      />
+    </View>
   );
 };
 

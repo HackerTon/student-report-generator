@@ -2,10 +2,14 @@ import firestore from '@react-native-firebase/firestore';
 import React, {useEffect, useReducer} from 'react';
 import {ActivityIndicator, View} from 'react-native';
 import {Text} from 'react-native-elements';
-import {TextInput, TouchableOpacity} from 'react-native-gesture-handler';
+import {
+  FlatList,
+  TextInput,
+  TouchableOpacity,
+} from 'react-native-gesture-handler';
 import {progress} from '../../Helper/Helper';
 import {Action, Level, Model, Student} from '../../Helper/Types';
-import {MyList, MySectionList} from '../List';
+import {MySectionList} from '../List';
 
 const initialState = {
   count: 0,
@@ -175,7 +179,11 @@ const MyForm = ({navigation}: {navigation: any}) => {
           </View>
           {/* flatlist for student name */}
           <View style={{flex: 9}}>
-            <MyList data={data} rendererItem={renderItem} />
+            <FlatList
+              data={data}
+              renderItem={renderItem}
+              keyExtractor={item => item.id}
+            />
           </View>
         </View>
       );
@@ -200,7 +208,11 @@ const MyForm = ({navigation}: {navigation: any}) => {
     case 2:
       return (
         <View style={{flex: 1, backgroundColor: '#121212', paddingTop: 10}}>
-          <MyList data={progress} rendererItem={renderItem2} />
+          <FlatList
+            data={progress}
+            renderItem={renderItem2}
+            keyExtractor={item => item}
+          />
         </View>
       );
     case 3:

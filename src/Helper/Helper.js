@@ -104,6 +104,9 @@ const ReadData = async (callback, set) => {
     console.error(`Error during write: ${e}`);
   }
 };
+
+const keyExtractor = (_, index) => index.toString();
+
 export {
   StringGenerator,
   WriteData,
@@ -112,4 +115,5 @@ export {
   models,
   progress,
   testname,
+  keyExtractor,
 };

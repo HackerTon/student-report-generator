@@ -19,9 +19,11 @@ export type Level = {
 };
 
 export type Student = {
-  id: String;
+  id: string;
   classday: String;
   name: String;
+  progress?: String;
+  index?: String;
 };
 
 export type Detail = {
