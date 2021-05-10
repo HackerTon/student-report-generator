@@ -1,13 +1,14 @@
 import Clipboard from '@react-native-community/clipboard';
 import firestore from '@react-native-firebase/firestore';
+import lodash from 'lodash';
 import moment from 'moment';
 import React, {useEffect, useState} from 'react';
 import {Alert, View} from 'react-native';
 import {Button, Icon, Text} from 'react-native-elements';
-import {Detail, Record} from '../../Types';
+import {Detail} from '../../Types';
 import {MyList} from '../List';
 
-const renderItem = ({item, index}: {item: Record; index: number}) => {
+const renderItem = ({item, index}: {item: Detail; index: number}) => {
   return (
     <View
       style={{
@@ -25,13 +26,25 @@ const renderItem = ({item, index}: {item: Record; index: number}) => {
           fontSize: 17,
           opacity: 0.6,
         }}>
-        {index}. {item.name}
+        {index}. {item.studentName}
       </Text>
       <Text>
-        {item.level} {item.model} {item.progress}
+        {item.level} {item.modelName} {item.progress}
       </Text>
     </View>
   );
+};
+
+const checkDuplicate = (array: Detail[], param: Detail) => {
+  let hasDuplicate = false;
+
+  array.forEach(detail => {
+    if (detail.id === param.id) {
+      hasDuplicate = true;
+    }
+  });
+
+  return hasDuplicate;
 };
 
 const ReportStudent = ({navigation, route}: {navigation: any; route: any}) => {
@@ -40,7 +53,18 @@ const ReportStudent = ({navigation, route}: {navigation: any; route: any}) => {
 
   useEffect(() => {
     if (params != null) {
-      setRecord([...record, params]);
+      // check duplicate
+      if (checkDuplicate(record, params)) {
+        // has duplicate
+        // show error message
+        Alert.alert(
+          'Duplicate',
+          `You have inserted student ${params.studentName}\n${params.id}`,
+        );
+      } else {
+        // else just add to record array
+        setRecord([...record, params]);
+      }
     }
   }, [params]);
 
@@ -72,7 +96,7 @@ const ReportStudent = ({navigation, route}: {navigation: any; route: any}) => {
   const Generate = () => {
     let text = '';
 
-    if (record.length > 1) {
+    if (record.length > 0) {
       firestore()
         .runTransaction(async transaction => {
           const historyRef = firestore().collection('history').doc();
