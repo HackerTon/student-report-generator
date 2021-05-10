@@ -61,7 +61,7 @@ const InsertStudent = ({name, classday}) => {
           .collection('student')
           .add({name: name, classday: classday})
           .then(() => {
-            console.log('write student successful');
+            ('write student successful');
           })
           .catch(err => 'write student failure');
       } else {

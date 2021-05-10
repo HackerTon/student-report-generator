@@ -8,18 +8,17 @@ import moment from 'moment';
 import React, {useEffect, useState} from 'react';
 import {Alert, View} from 'react-native';
 import {Button, Icon, Text} from 'react-native-elements';
-import {State, TapGestureHandler} from 'react-native-gesture-handler';
-import {Props, Record} from '../../Types';
-import {MyList} from '../List';
-import RegistrationScreen from '../Regis/Registration';
+import {TapGestureHandler} from 'react-native-gesture-handler';
 import {
   Menu,
   MenuOption,
   MenuOptions,
   MenuProvider,
   MenuTrigger,
-  renderers,
 } from 'react-native-popup-menu';
+import {Props, Record} from '../../Types';
+import {MyList} from '../List';
+import RegistrationScreen from '../Regis/Registration';
 
 const homeOptions: BottomTabNavigationOptions = {
   tabBarIcon: ({focused}) => {

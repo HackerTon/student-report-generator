@@ -85,7 +85,7 @@ const WriteData = async (array, set) => {
 
   try {
     await AsyncStorage.setItem(selection, JSON.stringify(array));
-    console.log('Write successful');
+    ('Write successful');
   } catch (e) {
     console.error(`Error during write: ${e}`);
   }
@@ -100,8 +100,6 @@ const ReadData = async (callback, set) => {
     const value = JSON.parse(jsonValue);
 
     callback(value);
-
-    console.log('Read successful.');
   } catch (e) {
     console.error(`Error during write: ${e}`);
   }

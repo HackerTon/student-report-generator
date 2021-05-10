@@ -51,23 +51,6 @@ const MyForm = ({navigation}: {navigation: any}) => {
   // reading all data from student
   // and model collection
   useEffect(() => {
-    // const batch = firestore().batch();
-    // let count: number = 0;
-    // models.forEach((doc, index) => {
-    //   doc.data.forEach(name => {
-    //     count = count + 1;
-    //     const docRef = firestore()
-    //       .collection('model')
-    //       .doc(count + '');
-    //     batch.set(docRef, {
-    //       name: name,
-    //       index: count,
-    //       level: index + 1,
-    //     });
-    //   });
-    // });
-    // batch.commit();
-
     firestore()
       .collection('student')
       .orderBy('name', 'asc')
@@ -154,7 +137,7 @@ const MyForm = ({navigation}: {navigation: any}) => {
   };
 
   if (state.loading) {
-    return <ActivityIndicator />;
+    return <ActivityIndicator style={{flex: 1, backgroundColor: '#121212'}} />;
   }
 
   let data =
