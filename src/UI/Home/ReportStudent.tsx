@@ -5,7 +5,7 @@ import moment from 'moment';
 import React, {useEffect, useState} from 'react';
 import {Alert, View} from 'react-native';
 import {Button, Icon, Text} from 'react-native-elements';
-import {Detail} from '../../Types';
+import {Detail} from '../../Helper/Types';
 import {MyList} from '../List';
 
 const renderItem = ({item, index}: {item: Detail; index: number}) => {

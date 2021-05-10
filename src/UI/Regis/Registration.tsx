@@ -9,7 +9,7 @@ import {
   TapGestureHandler,
   TextInput,
 } from 'react-native-gesture-handler';
-import {testname} from '../../Helper';
+import {testname} from '../../Helper/Helper';
 
 const renderItem = ({item}) => {
   return (
@@ -148,8 +148,8 @@ const RegistrationScreen = () => {
         containerStyle={{
           backgroundColor: '#BB86FC',
           position: 'absolute',
-          right: 10,
-          bottom: 10,
+          right: 15,
+          bottom: 15,
           borderRadius: 100,
         }}
         icon={<Icon name="add" size={40} color="black" />}

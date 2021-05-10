@@ -26,7 +26,7 @@ const App = () => {
             animationTypeForReplace: 'push',
             animationEnabled: false,
           }}>
-          <Stack.Screen name="Records" component={HomeNavigator} />
+          <Stack.Screen name="History" component={HomeNavigator} />
           <Stack.Screen name="Report" component={ReportStudent} />
           <Stack.Screen name="Form" component={Form} />
         </Stack.Navigator>

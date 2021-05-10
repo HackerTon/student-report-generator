@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {FlatList, SectionList, StyleProp, ViewStyle} from 'react-native';
 import {ListItem, Text} from 'react-native-elements';
 import {TouchableOpacity} from 'react-native-gesture-handler';
-import {mylistProp} from '../Types';
+import {mylistProp} from '../Helper/Types';
 
 const MyList = ({data, style, selection, rendererItem}: mylistProp) => {
   const [selectedId, setSelectedId] = useState(null);

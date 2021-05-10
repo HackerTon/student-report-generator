@@ -3,8 +3,8 @@ import React, {useEffect, useReducer} from 'react';
 import {ActivityIndicator, View} from 'react-native';
 import {Text} from 'react-native-elements';
 import {TextInput, TouchableOpacity} from 'react-native-gesture-handler';
-import {progress} from '../../Helper';
-import {Action, Level, Model, Student} from '../../Types';
+import {progress} from '../../Helper/Helper';
+import {Action, Level, Model, Student} from '../../Helper/Types';
 import {MyList, MySectionList} from '../List';
 
 const initialState = {

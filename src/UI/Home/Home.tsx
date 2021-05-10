@@ -16,7 +16,7 @@ import {
   MenuProvider,
   MenuTrigger,
 } from 'react-native-popup-menu';
-import {Props, Record} from '../../Types';
+import {Props, Record} from '../../Helper/Types';
 import {MyList} from '../List';
 import RegistrationScreen from '../Regis/Registration';
 
@@ -71,6 +71,10 @@ const RenderItem = ({item}: {item: Record}) => (
         backgroundColor: '#191919',
         elevation: 1,
         flex: 1,
+        borderRadius: 10,
+        padding: 10,
+        marginTop: 7.5,
+        marginBottom: 7.5,
       }}>
       {/* title header */}
       <View
@@ -159,26 +163,20 @@ const HomeScreen = ({navigation}: Props) => {
           flex: 1,
           backgroundColor: '#121212',
         }}>
-        <View
-          style={{
-            flex: 0,
-            flexDirection: 'row',
-            justifyContent: 'center',
-          }}>
-          <Text style={{fontSize: 35, fontWeight: 'bold', paddingTop: 10}}>
-            History
-          </Text>
-        </View>
         <View style={{flex: 1}}>
-          <MyList data={history} rendererItem={RenderItem} />
+          <MyList
+            data={history}
+            rendererItem={RenderItem}
+            style={{paddingHorizontal: 15}}
+          />
         </View>
         <Button
           type="clear"
           containerStyle={{
             backgroundColor: '#03DAC5',
             position: 'absolute',
-            right: 10,
-            bottom: 10,
+            right: 15,
+            bottom: 15,
             borderRadius: 100,
           }}
           icon={<Icon name="add" size={40} color="black" />}
