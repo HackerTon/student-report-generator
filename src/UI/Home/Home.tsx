@@ -12,6 +12,14 @@ import {State, TapGestureHandler} from 'react-native-gesture-handler';
 import {Props, Record} from '../../Types';
 import {MyList} from '../List';
 import RegistrationScreen from '../Regis/Registration';
+import {
+  Menu,
+  MenuOption,
+  MenuOptions,
+  MenuProvider,
+  MenuTrigger,
+  renderers,
+} from 'react-native-popup-menu';
 
 const homeOptions: BottomTabNavigationOptions = {
   tabBarIcon: ({focused}) => {
@@ -43,30 +51,36 @@ const tabBarOptions: BottomTabBarOptions = {
   },
 };
 
+const WriteHistory = (item: Record) => {
+  firestore()
+    .collection('history')
+    .doc(item.id + '')
+    .delete()
+    .catch(() => Alert.alert('Warning', 'Write failure.'));
+};
+
 const RenderItem = ({item}: {item: Record}) => (
   <TapGestureHandler
-    onHandlerStateChange={({nativeEvent}) => {
-      if (nativeEvent.state === State.ACTIVE) {
-        Alert.alert('Discard this history?', 'Do you still want to discard?', [
-          {text: 'Cancel', style: 'cancel', onPress: () => {}},
-          {
-            text: 'Discard',
-            style: 'destructive',
-            onPress: () => WriteHistory(item),
-          },
-        ]);
-      }
-    }}>
+  // onHandlerStateChange={({nativeEvent}) => {
+  //   if (nativeEvent.state === State.ACTIVE) {
+
+  //   }
+  // }}
+  >
     <View
       style={{
-        marginHorizontal: 15,
-        marginTop: 20,
-        marginBottom: 20,
         backgroundColor: '#191919',
-        borderRadius: 7,
         elevation: 1,
+        flex: 1,
       }}>
-      <View style={{paddingHorizontal: 15, paddingTop: 5}}>
+      {/* title header */}
+      <View
+        style={{
+          flex: 1,
+          flexDirection: 'row',
+          justifyContent: 'space-around',
+          alignItems: 'center',
+        }}>
         <Text
           style={{
             fontSize: 32,
@@ -75,6 +89,30 @@ const RenderItem = ({item}: {item: Record}) => (
           }}>
           {moment(item.timecode).format('dddd ll')}
         </Text>
+        <Menu>
+          <MenuTrigger>
+            <Icon name="settings" type="Feather" size={20} color="white" />
+          </MenuTrigger>
+          <MenuOptions>
+            <MenuOption
+              onSelect={() => {
+                Alert.alert(
+                  'Discard this history?',
+                  'Do you still want to discard?',
+                  [
+                    {text: 'Cancel', style: 'cancel', onPress: () => {}},
+                    {
+                      text: 'Discard',
+                      style: 'destructive',
+                      onPress: () => WriteHistory(item),
+                    },
+                  ],
+                );
+              }}
+              text="Delete"
+            />
+          </MenuOptions>
+        </Menu>
       </View>
       <View style={{paddingHorizontal: 15, paddingTop: 5}}>
         <Text>
@@ -91,14 +129,6 @@ const RenderItem = ({item}: {item: Record}) => (
     </View>
   </TapGestureHandler>
 );
-
-const WriteHistory = (item: Record) => {
-  firestore()
-    .collection('history')
-    .doc(item.id + '')
-    .delete()
-    .catch(() => Alert.alert('Warning', 'Write failure.'));
-};
 
 const Tab = createBottomTabNavigator();
 
@@ -124,38 +154,41 @@ const HomeScreen = ({navigation}: Props) => {
   }, []);
 
   return (
-    <View
-      style={{
-        height: '100%',
-        backgroundColor: '#121212',
-        elevation: 0,
-      }}>
+    <MenuProvider>
       <View
         style={{
-          flex: 0,
-          flexDirection: 'row',
-          justifyContent: 'center',
+          flex: 1,
+          backgroundColor: '#121212',
         }}>
-        <Text style={{fontSize: 35, fontWeight: 'bold', paddingTop: 10}}>
-          History
-        </Text>
+        <View
+          style={{
+            flex: 0,
+            flexDirection: 'row',
+            justifyContent: 'center',
+          }}>
+          <Text style={{fontSize: 35, fontWeight: 'bold', paddingTop: 10}}>
+            History
+          </Text>
+        </View>
+        <View style={{flex: 1}}>
+          <MyList data={history} rendererItem={RenderItem} />
+        </View>
+        <Button
+          type="clear"
+          containerStyle={{
+            backgroundColor: '#03DAC5',
+            position: 'absolute',
+            right: 10,
+            bottom: 10,
+            borderRadius: 100,
+          }}
+          icon={<Icon name="add" size={40} color="black" />}
+          onPress={() => {
+            navigation.navigate('Report');
+          }}
+        />
       </View>
-      <MyList data={history} rendererItem={RenderItem} />
-      <Button
-        type="clear"
-        containerStyle={{
-          backgroundColor: '#03DAC5',
-          position: 'absolute',
-          right: 10,
-          bottom: 10,
-          borderRadius: 100,
-        }}
-        icon={<Icon name="add" size={40} color="black" />}
-        onPress={() => {
-          navigation.navigate('Report');
-        }}
-      />
-    </View>
+    </MenuProvider>
   );
 };
 
