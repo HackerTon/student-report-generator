@@ -26,6 +26,16 @@ export type Student = {
   index?: String;
 };
 
+export type StudentRegis = {
+  id: string;
+  classday: String;
+  studentName: String;
+  modelName: String;
+  progress?: String;
+  index?: String;
+  level: String;
+};
+
 export type Detail = {
   id?: String;
   studentName?: String;
@@ -54,10 +64,7 @@ export type RootTabParamList = {
   Report: undefined;
 };
 
-export type TabScreenNavProp = BottomTabNavigationProp<
-  RootTabParamList,
-  'Home'
->;
+export type TabScreenNavProp = BottomTabNavigationProp<RootTabParamList>;
 
 export type Props = {
   route: undefined;

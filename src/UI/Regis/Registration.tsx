@@ -1,13 +1,9 @@
 import firestore from '@react-native-firebase/firestore';
 import {Picker} from '@react-native-picker/picker';
 import React, {useEffect, useState} from 'react';
-import {Alert, View} from 'react-native';
+import {ActivityIndicator, Alert, View} from 'react-native';
 import {Button, Icon, Text} from 'react-native-elements';
-import {
-  FlatList,
-  TapGestureHandler,
-  TextInput,
-} from 'react-native-gesture-handler';
+import {FlatList, TextInput} from 'react-native-gesture-handler';
 import {
   Menu,
   MenuOption,
@@ -15,80 +11,70 @@ import {
   MenuTrigger,
 } from 'react-native-popup-menu';
 import {testname} from '../../Helper/Helper';
-import {Student} from '../../Helper/Types';
+import {StudentRegis, TabScreenNavProp} from '../../Helper/Types';
 
-const renderItem = ({item}: {item: Student}) => {
+const renderItem = ({item}: {item: StudentRegis}) => {
   return (
-    <TapGestureHandler
-    // onHandlerStateChange={event => {
-    //   if (event.nativeEvent.state === State.ACTIVE) {
-    //     Alert.alert(
-    //       'Discard student ' + item.name,
-    //       'Do you still want to discard?',
-    //       [
-    //         {text: 'Cancel', style: 'cancel', onPress: () => {}},
-    //         {
-    //           text: 'Discard',
-    //           style: 'destructive',
-    //           onPress: () => RemoveStudent(item.id),
-    //         },
-    //       ],
-    //     );
-    //   }
-    // }}
-    >
+    <View
+      style={{
+        flex: 1,
+        backgroundColor: '#191919',
+        padding: 10,
+        marginTop: 10,
+        marginBottom: 5,
+        marginHorizontal: 10,
+        borderRadius: 5,
+      }}>
+      {/* header detail */}
       <View
         style={{
           flex: 1,
           flexDirection: 'row',
-          backgroundColor: '#191919',
-          padding: 10,
-          marginTop: 10,
-          marginBottom: 5,
-          marginHorizontal: 10,
-          borderRadius: 5,
         }}>
         {/* student detail */}
-        <View style={{flex: 1}}>
-          <Text style={{fontSize: 17}}>{item.name}</Text>
-        </View>
+        <Text style={{fontSize: 17, flex: 1}}>{item.studentName}</Text>
         {/* setting icon */}
-        <View style={{flex: 0}}>
-          <Menu>
-            <MenuTrigger>
-              <Icon name="settings" type="Feather" size={20} color="white" />
-            </MenuTrigger>
-            <MenuOptions>
-              <MenuOption
-                customStyles={{
-                  optionText: {color: 'black', fontSize: 17},
-                  optionWrapper: {
-                    backgroundColor: 'white',
-                    padding: 10,
-                    elevation: 7,
-                  },
-                }}
-                onSelect={() => {
-                  Alert.alert(
-                    'Discard this history?',
-                    'Do you still want to discard?',
-                    [
-                      {text: 'Cancel', style: 'cancel', onPress: () => {}},
-                      {
-                        text: 'Discard',
-                        style: 'destructive',
-                        onPress: () => RemoveStudent(item.id),
-                      },
-                    ],
-                  );
-                }}
-                text="Delete"
-              />
-            </MenuOptions>
-          </Menu>
-        </View>
+        <Menu style={{flex: 0}}>
+          <MenuTrigger>
+            <Icon name="settings" type="Feather" size={20} color="white" />
+          </MenuTrigger>
+          <MenuOptions>
+            <MenuOption
+              customStyles={{
+                optionText: {color: 'black', fontSize: 17},
+                optionWrapper: {
+                  backgroundColor: 'white',
+                  padding: 10,
+                  elevation: 7,
+                },
+              }}
+              onSelect={() => {
+                Alert.alert(
+                  'Discard this history?',
+                  'Do you still want to discard?',
+                  [
+                    {text: 'Cancel', style: 'cancel', onPress: () => {}},
+                    {
+                      text: 'Discard',
+                      style: 'destructive',
+                      onPress: () => RemoveStudent(item.id),
+                    },
+                  ],
+                );
+              }}
+              text="Delete"
+            />
+          </MenuOptions>
+        </Menu>
       </View>
-    </TapGestureHandler>
+      {/* student details, level, progress */}
+      <View style={{flex: 1}}>
+        <Text style={{flex: 1}}>Progress: {item.progress}</Text>
+        <Text style={{flex: 1}}>Day: {item.classday}</Text>
+        <Text style={{flex: 1}}>Model: {item.modelName}</Text>
+        <Text style={{flex: 1}}>Level: {item.level}</Text>
+      </View>
+    </View>
   );
 };
 
@@ -121,25 +107,53 @@ const RemoveStudent = (id: string) => {
   }
 };
 
-const RegistrationScreen = () => {
-  const [students, setStudents] = useState<Student[]>([]);
+const RegistrationScreen = ({navigation}: {navigation: TabScreenNavProp}) => {
+  const [students, setStudents] = useState<StudentRegis[]>([]);
   const [name, setName] = useState('');
   const [day, setDay] = useState('wed');
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const subscribe = firestore()
-      .collection('student')
-      .orderBy('name', 'asc')
-      .onSnapshot(query => {
-        const student: Student[] = [];
-        query.forEach(document => {
-          const {classday, index, name, progress} = document.data();
-          student.push({id: document.id, classday, index, name, progress});
-        });
-        setStudents(student);
-      });
-    return subscribe;
+    const unsubscribe = navigation.addListener('focus', () => {
+      firestore()
+        .collection('student')
+        .orderBy('name', 'asc')
+        .get()
+        .then(query => {
+          const student: StudentRegis[] = [];
+          query.forEach(document => {
+            const {classday, index, name, progress} = document.data();
+            firestore()
+              .collection('model')
+              .doc(index + '')
+              .get()
+              .then(doc => {
+                const data = doc.data();
+
+                student.push({
+                  id: document.id,
+                  studentName: name,
+                  modelName: data?.name,
+                  level: data?.level,
+                  classday,
+                  index,
+                  progress,
+                });
+                setStudents(student);
+              })
+              .catch(e => console.error(e));
+          });
+          setLoading(false);
+        })
+        .catch(e => console.error(e));
+    });
+
+    return unsubscribe;
   }, []);
+
+  if (loading) {
+    return <ActivityIndicator color="#121212" />;
+  }
 
   return (
     <View
