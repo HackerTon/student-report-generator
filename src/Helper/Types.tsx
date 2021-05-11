@@ -4,51 +4,60 @@ import {FirebaseFirestoreTypes} from '@react-native-firebase/firestore';
 
 export type Record = {
   timecode: FirebaseFirestoreTypes.Timestamp;
-  id: String;
+  id: string;
   data: Detail[];
 };
 
 export type Model = {
   index: Number;
-  name: String;
+  name: string;
 };
 
 export type Level = {
-  title: String;
+  title: string;
   data: Model[];
 };
 
 export type Student = {
   id: string;
-  classday: String;
-  name: String;
-  progress?: String;
-  index?: String;
+  classday: string;
+  name: string;
+  progress?: string;
+  index?: string;
 };
 
 export type StudentRegis = {
   id: string;
-  classday: String;
-  studentName: String;
-  modelName: String;
-  progress?: String;
-  index?: String;
-  level: String;
+  classday: string;
+  studentName: string;
+  modelName: string;
+  progress?: string;
+  index?: string;
+  level: string;
 };
 
 export type Detail = {
-  id?: String;
-  studentName?: String;
-  modelName?: String;
-  progress?: String;
+  id?: string;
+  studentName?: string;
+  modelName?: string;
+  progress?: string;
   index?: Number;
   level?: Number;
+};
+
+export type regisState = {
+  count: number;
+  loading: boolean;
+  query: string;
+  student: Student[];
+  models: Level[];
+  detail: Detail;
 };
 
 export type Action =
   | {type: 'setdetail'; detail: Detail}
   | {type: 'setstudent'; student: Student[]}
-  | {type: 'setquery'; query: String}
+  | {type: 'setquery'; query: string}
   | {type: 'setmodel'; models: Level[]}
   | {type: 'setloading'; loading: Boolean};
 

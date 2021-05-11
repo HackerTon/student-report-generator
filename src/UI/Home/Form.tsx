@@ -1,5 +1,5 @@
 import firestore from '@react-native-firebase/firestore';
-import React, {useEffect, useReducer} from 'react';
+import React, {useContext, useEffect} from 'react';
 import {ActivityIndicator, View} from 'react-native';
 import {Text} from 'react-native-elements';
 import {
@@ -7,50 +7,13 @@ import {
   TextInput,
   TouchableOpacity,
 } from 'react-native-gesture-handler';
+import {DetailDispatch} from '../../App';
 import {progress} from '../../Helper/Helper';
-import {Action, Level, Model, Student} from '../../Helper/Types';
+import {Level, Model, Student} from '../../Helper/Types';
 import {MySectionList} from '../List';
 
-const initialState = {
-  count: 0,
-  loading: true,
-  query: '',
-  student: [],
-  models: [],
-  detail: {
-    id: '',
-    index: 0,
-    level: 0,
-    progress: '',
-    studentName: '',
-    modelName: '',
-  },
-};
-
-const reducer = (state: any, action: Action) => {
-  switch (action.type) {
-    case 'setdetail':
-      const thisdetail = {...state.detail, ...action.detail};
-      return {
-        ...state,
-        count: state.count + 1,
-        detail: thisdetail,
-      };
-    case 'setstudent':
-      return {...state, student: action.student};
-    case 'setquery':
-      return {...state, query: action.query};
-    case 'setmodel':
-      return {...state, models: action.models};
-    case 'setloading':
-      return {...state, loading: action.loading};
-    default:
-      throw new Error('no type for this ' + action.type);
-  }
-};
-
 const MyForm = ({navigation}: {navigation: any}) => {
-  const [state, dispatch] = useReducer(reducer, initialState);
+  const {state, dispatch} = useContext(DetailDispatch);
 
   // reading all data from student
   // and model collection
@@ -116,7 +79,7 @@ const MyForm = ({navigation}: {navigation: any}) => {
     );
   };
 
-  const renderItem2 = ({item}: {item: String}) => {
+  const renderItem2 = ({item}: {item: string}) => {
     return (
       <TouchableOpacity
         style={{
