@@ -117,7 +117,7 @@ const ReportStudent = ({navigation, route}: {navigation: any; route: any}) => {
             transaction.update(studentRef, {index, progress});
           });
         })
-        .then(value => {
+        .then(_ => {
           // concatenate details of each student
           // into string
           record.forEach((data, index) => {

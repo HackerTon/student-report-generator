@@ -18,6 +18,7 @@ const initialState = {
   query: '',
   student: [],
   models: [],
+  prevModel: -1,
   detail: {
     id: '',
     index: 0,
@@ -45,6 +46,10 @@ const reducer = (state: regisState, action: Action) => {
       return {...state, models: action.models};
     case 'setloading':
       return {...state, loading: action.loading};
+    case 'setprevmodel':
+      return {...state, prevModel: action.prevmodel};
+    case 'resetcount':
+      return {...state, count: 0};
     default:
       throw new Error('no type for this ' + action);
   }

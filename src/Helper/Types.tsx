@@ -51,6 +51,7 @@ export type regisState = {
   query: string;
   student: Student[];
   models: Level[];
+  prevModel: number;
   detail: Detail;
 };
 
@@ -59,7 +60,9 @@ export type Action =
   | {type: 'setstudent'; student: Student[]}
   | {type: 'setquery'; query: string}
   | {type: 'setmodel'; models: Level[]}
-  | {type: 'setloading'; loading: Boolean};
+  | {type: 'setloading'; loading: Boolean}
+  | {type: 'setprevmodel'; prevmodel: number}
+  | {type: 'resetcount'};
 
 export type mylistProp = {
   data: any[];

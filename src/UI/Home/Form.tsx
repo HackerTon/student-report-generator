@@ -15,6 +15,14 @@ import {MySectionList} from '../List';
 const MyForm = ({navigation}: {navigation: any}) => {
   const {state, dispatch} = useContext(DetailDispatch);
 
+  useEffect(
+    () =>
+      navigation.addListener('beforeRemove', e =>
+        dispatch({type: 'resetcount'}),
+      ),
+    [],
+  );
+
   // reading all data from student
   // and model collection
   useEffect(() => {
@@ -25,8 +33,8 @@ const MyForm = ({navigation}: {navigation: any}) => {
       .then(snapshot => {
         let student: Student[] = [];
         snapshot.forEach(document => {
-          const {classday, name} = document.data();
-          student.push({id: document.id, classday, name});
+          const {classday, name, index} = document.data();
+          student.push({id: document.id, classday, name, index});
         });
 
         // read all models option
@@ -52,6 +60,7 @@ const MyForm = ({navigation}: {navigation: any}) => {
       });
   }, []);
 
+  // setstudent
   const renderItem = ({item}: {item: Student}) => {
     return (
       <TouchableOpacity
@@ -64,10 +73,17 @@ const MyForm = ({navigation}: {navigation: any}) => {
           borderRadius: 4,
         }}
         onPress={() => {
+          // setdetail
           dispatch({
             type: 'setdetail',
             detail: {studentName: item.name, id: item.id},
           });
+
+          // set prevmodel
+          // only if index is defined
+          if (item.index) {
+            dispatch({type: 'setprevmodel', prevmodel: item.index});
+          }
         }}>
         <Text
           style={{
@@ -79,6 +95,7 @@ const MyForm = ({navigation}: {navigation: any}) => {
     );
   };
 
+  // setprogress
   const renderItem2 = ({item}: {item: string}) => {
     return (
       <TouchableOpacity
@@ -180,6 +197,7 @@ const MyForm = ({navigation}: {navigation: any}) => {
       );
     case 3:
       navigation.navigate('Report', state.detail);
+      dispatch({type: 'resetcount'});
       return <View></View>;
   }
 };
