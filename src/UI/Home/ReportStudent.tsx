@@ -1,11 +1,12 @@
 import Clipboard from '@react-native-community/clipboard';
 import firestore from '@react-native-firebase/firestore';
 import moment from 'moment';
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {Alert, View} from 'react-native';
 import {Button, Icon, Text} from 'react-native-elements';
 import {FlatList} from 'react-native-gesture-handler';
-import {Detail} from '../../Helper/Types';
+import {DetailDispatch} from '../../App';
+import {Detail, Level, Student} from '../../Helper/Types';
 
 const renderItem = ({item, index}: {item: Detail; index: number}) => {
   return (
@@ -49,6 +50,7 @@ const checkDuplicate = (array: Detail[], param: Detail) => {
 const ReportStudent = ({navigation, route}: {navigation: any; route: any}) => {
   const {params}: {params: Detail} = route;
   const [record, setRecord] = useState<Detail[]>([]);
+  const {state, dispatch} = useContext(DetailDispatch);
 
   useEffect(() => {
     if (params != null) {
@@ -66,6 +68,43 @@ const ReportStudent = ({navigation, route}: {navigation: any; route: any}) => {
       }
     }
   }, [params]);
+
+  // reading all data from student
+  // and model collection
+  useEffect(() => {
+    firestore()
+      .collection('student')
+      .orderBy('name', 'asc')
+      .get()
+      .then(snapshot => {
+        let student: Student[] = [];
+        snapshot.forEach(document => {
+          const {classday, name, index} = document.data();
+          student.push({id: document.id, classday, name, index});
+        });
+
+        // read all models option
+        firestore()
+          .collection('model')
+          .orderBy('index', 'asc')
+          .get()
+          .then(snapshot => {
+            let modelsArray: Level[] = [];
+            snapshot.forEach(doc => {
+              const {level, name} = doc.data();
+              if (modelsArray[level - 1] === undefined) {
+                modelsArray[level - 1] = {title: 'level' + level, data: []};
+              }
+
+              modelsArray[level - 1].data.push({index: parseInt(doc.id), name});
+            });
+            // write to our state
+            dispatch({type: 'setstudent', student: student});
+            dispatch({type: 'setmodel', models: modelsArray});
+            dispatch({type: 'setloading', loading: false});
+          });
+      });
+  }, []);
 
   useEffect(
     () =>

@@ -23,43 +23,6 @@ const MyForm = ({navigation}: {navigation: any}) => {
     [],
   );
 
-  // reading all data from student
-  // and model collection
-  useEffect(() => {
-    firestore()
-      .collection('student')
-      .orderBy('name', 'asc')
-      .get()
-      .then(snapshot => {
-        let student: Student[] = [];
-        snapshot.forEach(document => {
-          const {classday, name, index} = document.data();
-          student.push({id: document.id, classday, name, index});
-        });
-
-        // read all models option
-        firestore()
-          .collection('model')
-          .orderBy('index', 'asc')
-          .get()
-          .then(snapshot => {
-            let modelsArray: Level[] = [];
-            snapshot.forEach(doc => {
-              const {level, name} = doc.data();
-              if (modelsArray[level - 1] === undefined) {
-                modelsArray[level - 1] = {title: 'level' + level, data: []};
-              }
-
-              modelsArray[level - 1].data.push({index: parseInt(doc.id), name});
-            });
-            // write to our state
-            dispatch({type: 'setstudent', student: student});
-            dispatch({type: 'setmodel', models: modelsArray});
-            dispatch({type: 'setloading', loading: false});
-          });
-      });
-  }, []);
-
   // setstudent
   const renderItem = ({item}: {item: Student}) => {
     return (
