@@ -152,7 +152,7 @@ const RegistrationScreen = ({navigation}: {navigation: TabScreenNavProp}) => {
   }, []);
 
   if (loading) {
-    return <ActivityIndicator color="#121212" />;
+    return <ActivityIndicator style={{backgroundColor: '#121212'}} />;
   }
 
   return (
