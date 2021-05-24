@@ -8,7 +8,7 @@ import moment from 'moment';
 import React, {useEffect, useState} from 'react';
 import {Alert, View} from 'react-native';
 import {Button, Icon, Text} from 'react-native-elements';
-import {FlatList, TapGestureHandler} from 'react-native-gesture-handler';
+import {FlatList} from 'react-native-gesture-handler';
 import {
   Menu,
   MenuOption,
@@ -20,23 +20,29 @@ import RegistrationScreen from '../Regis/Registration';
 
 const homeOptions: BottomTabNavigationOptions = {
   tabBarIcon: ({focused}) => {
-    let color = focused ? '#BB86FC' : '#8E8E8F';
-    return <Icon name="home" type="feather" color={color}></Icon>;
+    return (
+      <Icon
+        name="home"
+        type="feather"
+        color={focused ? '#BB86FC' : '#8E8E8F'}></Icon>
+    );
   },
   tabBarLabel: ({focused}) => {
-    let color = focused ? '#BB86FC' : '#8E8E8F';
-    return <Text style={{color}}>Home</Text>;
+    return <Text style={{color: focused ? '#BB86FC' : '#8E8E8F'}}>Home</Text>;
   },
 };
 
 const regisOptions: BottomTabNavigationOptions = {
   tabBarIcon: ({focused}) => {
-    let color = focused ? '#BB86FC' : '#8E8E8F';
-    return <Icon name="user" type="feather" color={color}></Icon>;
+    return (
+      <Icon
+        name="user"
+        type="feather"
+        color={focused ? '#BB86FC' : '#8E8E8F'}></Icon>
+    );
   },
   tabBarLabel: ({focused}) => {
-    let color = focused ? '#BB86FC' : '#8E8E8F';
-    return <Text style={{color}}>User</Text>;
+    return <Text style={{color: focused ? '#BB86FC' : '#8E8E8F'}}>User</Text>;
   },
 };
 
@@ -51,7 +57,7 @@ const tabBarOptions: BottomTabBarOptions = {
 const WriteHistory = (item: Record) => {
   firestore()
     .collection('history')
-    .doc(item.id + '')
+    .doc(`${item.id}`)
     .delete()
     .catch(() => Alert.alert('Warning', 'Write failure.'));
 };

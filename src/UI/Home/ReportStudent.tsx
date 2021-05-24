@@ -76,33 +76,33 @@ const ReportStudent = ({navigation, route}: {navigation: any; route: any}) => {
       .collection('student')
       .orderBy('name', 'asc')
       .get()
-      .then(snapshot => {
+      .then(async snapshot => {
         let student: Student[] = [];
         snapshot.forEach(document => {
           const {classday, name, index} = document.data();
           student.push({id: document.id, classday, name, index});
         });
 
-        // read all models option
-        firestore()
+        // read all model option
+        const modelSnaphot = await firestore()
           .collection('model')
           .orderBy('index', 'asc')
-          .get()
-          .then(snapshot => {
-            let modelsArray: Level[] = [];
-            snapshot.forEach(doc => {
-              const {level, name} = doc.data();
-              if (modelsArray[level - 1] === undefined) {
-                modelsArray[level - 1] = {title: 'level' + level, data: []};
-              }
+          .get();
 
-              modelsArray[level - 1].data.push({index: parseInt(doc.id), name});
-            });
-            // write to our state
-            dispatch({type: 'setstudent', student: student});
-            dispatch({type: 'setmodel', models: modelsArray});
-            dispatch({type: 'setloading', loading: false});
-          });
+        let modelsArray: Level[] = [];
+        modelSnaphot.forEach(doc => {
+          const {level, name} = doc.data();
+          if (modelsArray[level - 1] === undefined) {
+            modelsArray[level - 1] = {title: 'level' + level, data: []};
+          }
+
+          modelsArray[level - 1].data.push({index: parseInt(doc.id), name});
+        });
+
+        // write to our state
+        dispatch({type: 'setstudent', student: student});
+        dispatch({type: 'setmodel', models: modelsArray});
+        dispatch({type: 'setloading', loading: false});
       });
   }, []);
 

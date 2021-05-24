@@ -1,5 +1,6 @@
 import firestore from '@react-native-firebase/firestore';
 import {Picker} from '@react-native-picker/picker';
+import moment from 'moment';
 import React, {useEffect, useState} from 'react';
 import {ActivityIndicator, Alert, View} from 'react-native';
 import {Button, Icon, Text} from 'react-native-elements';
@@ -81,17 +82,14 @@ const renderItem = ({item}: {item: StudentRegis}) => {
 const InsertStudent = ({name, day}: {name: String; day: String}) => {
   if (testname(name)) {
     const query = firestore().collection('student').where('name', '==', name);
-
-    query.get().then(snapshot => {
+    query.get().then(async snapshot => {
       const isEmpty = snapshot.empty;
       if (isEmpty) {
-        firestore()
-          .collection('student')
-          .add({name, classday: day})
-          .then(() => {
-            ('write student successful');
-          })
-          .catch(_ => 'write student failure');
+        try {
+          await firestore().collection('student').add({name, classday: day});
+        } catch (exception) {
+          Alert.alert('Firestore error!', 'Error when saving to student model');
+        }
       } else {
         Alert.alert('Duplicate found', 'System found entry with same name');
       }
@@ -114,41 +112,40 @@ const RegistrationScreen = ({navigation}: {navigation: TabScreenNavProp}) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = navigation.addListener('focus', () => {
+    return navigation.addListener('focus', () => {
       firestore()
         .collection('student')
         .orderBy('name', 'asc')
         .get()
-        .then(query => {
+        .then(async query => {
           const student: StudentRegis[] = [];
-          query.forEach(document => {
+          query.forEach(async document => {
             const {classday, index, name, progress} = document.data();
-            firestore()
+            const modeldocRef = firestore()
               .collection('model')
-              .doc(index + '')
-              .get()
-              .then(doc => {
-                const data = doc.data();
+              .doc(index + '');
+            const modelDoc = await modeldocRef.get();
+            const data = modelDoc.data();
 
-                student.push({
-                  id: document.id,
-                  studentName: name,
-                  modelName: data?.name,
-                  level: data?.level,
-                  classday,
-                  index,
-                  progress,
-                });
-                setStudents(student);
-              })
-              .catch(e => console.error(e));
+            student.push({
+              id: document.id,
+              studentName: name,
+              modelName: data?.name,
+              level: data?.level,
+              classday,
+              index,
+              progress,
+            });
+            setStudents(student);
           });
+        })
+        .then(() => {
           setLoading(false);
         })
-        .catch(e => console.error(e));
+        .catch(e => {
+          Alert.alert('Firestore error!', 'read all student information error');
+        });
     });
-
-    return unsubscribe;
   }, []);
 
   if (loading) {
