@@ -57,89 +57,89 @@ const WriteHistory = (item: Record) => {
 };
 
 const RenderItem = ({item}: {item: Record}) => (
-  <TapGestureHandler
+  // <TapGestureHandler
   // onHandlerStateChange={({nativeEvent}) => {
   //   if (nativeEvent.state === State.ACTIVE) {
-
   //   }
   // }}
-  >
+  // >
+  // </TapGestureHandler>
+  <View
+    key={item.id}
+    style={{
+      backgroundColor: '#191919',
+      elevation: 1,
+      flex: 1,
+      borderRadius: 10,
+      padding: 10,
+      marginTop: 7.5,
+      marginBottom: 7.5,
+    }}>
+    {/* title header */}
     <View
       style={{
-        backgroundColor: '#191919',
-        elevation: 1,
         flex: 1,
-        borderRadius: 10,
-        padding: 10,
-        marginTop: 7.5,
-        marginBottom: 7.5,
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        alignItems: 'center',
       }}>
-      {/* title header */}
-      <View
+      <Text
         style={{
-          flex: 1,
-          flexDirection: 'row',
-          justifyContent: 'space-around',
-          alignItems: 'center',
+          fontSize: 30,
+          fontWeight: 'bold',
+          fontFamily: 'sans-serif-medium',
         }}>
-        <Text
-          style={{
-            fontSize: 30,
-            fontWeight: 'bold',
-            fontFamily: 'sans-serif-medium',
-          }}>
-          {moment(item.timecode).format('dddd ll')}
-        </Text>
-        {/* setting button */}
-        <View style={{flex: 1}}>
-          <Menu>
-            <MenuTrigger>
-              <Icon name="settings" type="Feather" size={20} color="white" />
-            </MenuTrigger>
-            <MenuOptions>
-              <MenuOption
-                customStyles={{
-                  optionText: {color: 'black', fontSize: 17},
-                  optionWrapper: {
-                    backgroundColor: 'white',
-                    padding: 10,
-                    elevation: 7,
-                  },
-                }}
-                onSelect={() => {
-                  Alert.alert(
-                    'Discard this history?',
-                    'Do you still want to discard?',
-                    [
-                      {text: 'Cancel', style: 'cancel', onPress: () => {}},
-                      {
-                        text: 'Discard',
-                        style: 'destructive',
-                        onPress: () => WriteHistory(item),
-                      },
-                    ],
-                  );
-                }}
-                text="Delete"
-              />
-            </MenuOptions>
-          </Menu>
-        </View>
-      </View>
-      <View style={{flex: 1, flexDirection: 'column'}}>
-        {item.data.map((value, index) => {
-          return (
-            <View>
-              <Text style={{fontSize: 16}} key={'' + value.id}>
-                {index + 1}. {value.studentName} Level {value.level}{' '}
-                {value.modelName} {value.progress}
-              </Text>
-            </View>
-          );
-        })}
+        {moment(item.timecode).format('dddd ll')}
+      </Text>
+      {/* setting button */}
+      <View style={{flex: 1}}>
+        <Menu>
+          <MenuTrigger>
+            <Icon name="settings" type="Feather" size={20} color="white" />
+          </MenuTrigger>
+          <MenuOptions>
+            <MenuOption
+              customStyles={{
+                optionText: {color: 'black', fontSize: 17},
+                optionWrapper: {
+                  backgroundColor: 'white',
+                  padding: 10,
+                  elevation: 7,
+                },
+              }}
+              onSelect={() => {
+                Alert.alert(
+                  'Discard this history?',
+                  'Do you still want to discard?',
+                  [
+                    {text: 'Cancel', style: 'cancel', onPress: () => {}},
+                    {
+                      text: 'Discard',
+                      style: 'destructive',
+                      onPress: () => WriteHistory(item),
+                    },
+                  ],
+                );
+              }}
+              text="Delete"
+            />
+          </MenuOptions>
+        </Menu>
       </View>
     </View>
-  </TapGestureHandler>
+    <View style={{flex: 1, flexDirection: 'column'}}>
+      {item.data.map((value, index) => {
+        return (
+          <View key={value.id}>
+            <Text style={{fontSize: 16}} key={'' + value.id}>
+              {index + 1}. {value.studentName} Level {value.level}{' '}
+              {value.modelName} {value.progress}
+            </Text>
+          </View>
+        );
+      })}
+    </View>
+  </View>
 );
 
 const Tab = createBottomTabNavigator();
