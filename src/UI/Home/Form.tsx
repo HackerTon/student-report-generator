@@ -1,4 +1,3 @@
-import firestore from '@react-native-firebase/firestore';
 import React, {useContext, useEffect} from 'react';
 import {ActivityIndicator, View} from 'react-native';
 import {Text} from 'react-native-elements';
@@ -9,10 +8,10 @@ import {
 } from 'react-native-gesture-handler';
 import {DetailDispatch} from '../../App';
 import {progress} from '../../Helper/Helper';
-import {Level, Model, Student} from '../../Helper/Types';
+import {Model, Student} from '../../Helper/Types';
 import {MySectionList} from '../List';
 
-const MyForm = ({navigation}: {navigation: any}) => {
+const MyForm = ({navigation, route}: {navigation: any; route: any}) => {
   const {state, dispatch} = useContext(DetailDispatch);
 
   useEffect(
@@ -161,6 +160,8 @@ const MyForm = ({navigation}: {navigation: any}) => {
     case 3:
       navigation.navigate('Report', state.detail);
       dispatch({type: 'resetcount'});
+      return <View></View>;
+    default:
       return <View></View>;
   }
 };

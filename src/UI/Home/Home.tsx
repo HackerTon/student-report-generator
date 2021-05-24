@@ -1,9 +1,4 @@
 import firestore from '@react-native-firebase/firestore';
-import {
-  BottomTabBarOptions,
-  BottomTabNavigationOptions,
-  createBottomTabNavigator,
-} from '@react-navigation/bottom-tabs';
 import moment from 'moment';
 import React, {useEffect, useState} from 'react';
 import {Alert, View} from 'react-native';
@@ -16,43 +11,6 @@ import {
   MenuTrigger,
 } from 'react-native-popup-menu';
 import {Props, Record} from '../../Helper/Types';
-import RegistrationScreen from '../Regis/Registration';
-
-const homeOptions: BottomTabNavigationOptions = {
-  tabBarIcon: ({focused}) => {
-    return (
-      <Icon
-        name="home"
-        type="feather"
-        color={focused ? '#BB86FC' : '#8E8E8F'}></Icon>
-    );
-  },
-  tabBarLabel: ({focused}) => {
-    return <Text style={{color: focused ? '#BB86FC' : '#8E8E8F'}}>Home</Text>;
-  },
-};
-
-const regisOptions: BottomTabNavigationOptions = {
-  tabBarIcon: ({focused}) => {
-    return (
-      <Icon
-        name="user"
-        type="feather"
-        color={focused ? '#BB86FC' : '#8E8E8F'}></Icon>
-    );
-  },
-  tabBarLabel: ({focused}) => {
-    return <Text style={{color: focused ? '#BB86FC' : '#8E8E8F'}}>User</Text>;
-  },
-};
-
-const tabBarOptions: BottomTabBarOptions = {
-  style: {
-    backgroundColor: '#191919',
-    borderTopWidth: 1,
-    borderTopColor: 'grey',
-  },
-};
 
 const WriteHistory = (item: Record) => {
   firestore()
@@ -148,9 +106,7 @@ const RenderItem = ({item}: {item: Record}) => (
   </View>
 );
 
-const Tab = createBottomTabNavigator();
-
-const HomeScreen = ({navigation}: Props) => {
+export const HomeScreen = ({navigation}: Props) => {
   const [history, setHistory] = useState<Record[]>([]);
 
   // first time initialized array
@@ -203,18 +159,3 @@ const HomeScreen = ({navigation}: Props) => {
     </View>
   );
 };
-
-const HomeNavigator = () => {
-  return (
-    <Tab.Navigator tabBarOptions={tabBarOptions}>
-      <Tab.Screen name="Home" component={HomeScreen} options={homeOptions} />
-      <Tab.Screen
-        name="Registration"
-        component={RegistrationScreen}
-        options={regisOptions}
-      />
-    </Tab.Navigator>
-  );
-};
-
-export default HomeNavigator;
